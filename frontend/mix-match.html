@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mix & Match Outfit Builder — Cute Crew</title>
+  <meta name="description" content="Build a complete kids outfit in 3 steps: pick a top, pick a bottom, add both to your bag. Girls and boys mix & match with smart colour matching.">
+  <meta name="theme-color" content="#e8352b">
+  <link rel="icon" href="/assets/img/favicon.png?v=8" type="image/png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/assets/js/tailwind.config.js"></script>
+  <link rel="stylesheet" href="/assets/css/theme.css">
+</head>
+<body class="font-body">
+  <div id="site-header"></div>
+
+  <main class="max-w-6xl mx-auto px-4 pt-8" x-data="mixMatch" x-cloak>
+
+    <!-- Title + gender tabs -->
+    <div class="text-center">
+      <p class="text-gold text-xs font-bold tracking-[0.3em] uppercase mb-1.5">Outfit Builder</p>
+      <h1 class="font-display font-extrabold text-3xl md:text-4xl">Mix & Match</h1>
+      <p class="text-soft text-sm mt-2">Pick a top. Pick a bottom. Done — add the whole outfit in one tap.</p>
+
+      <div class="inline-flex mt-6 rounded-full border border-line p-1 bg-surface" role="tablist" aria-label="Choose gender">
+        <button role="tab" :aria-selected="gender==='girls'" @click="setGender('girls')"
+          class="px-8 py-2.5 rounded-full text-sm font-bold transition-all"
+          :class="gender==='girls' ? 'bg-gold text-white' : 'text-soft hover:text-gold'">Girls</button>
+        <button role="tab" :aria-selected="gender==='boys'" @click="setGender('boys')"
+          class="px-8 py-2.5 rounded-full text-sm font-bold transition-all"
+          :class="gender==='boys' ? 'bg-gold text-white' : 'text-soft hover:text-gold'">Boys</button>
+      </div>
+    </div>
+
+    <!-- ============ GARANIMALS-STYLE MIX BOARD ============ -->
+    <section class="mm-board mt-8 p-4 md:p-8" aria-label="Outfit builder">
+      <div class="text-center">
+        <span class="mm-badge-light" :class="!match && 'bold-combo'">
+          <span x-text="match ? '✓ PERFECT MATCH' : '✱ BOLD COMBO'"></span>
+        </span>
+      </div>
+
+      <!-- TOPS WHEEL -->
+      <div class="mm-wheel" :style="`height:${wheelH}px`" role="listbox" aria-label="Choose a top">
+        <template x-for="(t, i) in tops" :key="t.id">
+          <div class="mm-wheel-item" :style="wheelStyle(i, ti, tops.length)" @click="pick('t', i)"
+               role="option" :aria-selected="i===ti" :title="t.name">
+            <img :src="t.imageCut" :alt="t.name" :class="!t.photoCut && 'mm-liftwhite'" draggable="false">
+          </div>
+        </template>
+        <button class="mm-arrow-round left" @click="step('t',-1)" aria-label="Previous top">‹</button>
+        <button class="mm-arrow-round right" @click="step('t',1)" aria-label="Next top">›</button>
+      </div>
+
+      <!-- BOTTOMS WHEEL -->
+      <div class="mm-wheel -mt-4 md:-mt-6" :style="`height:${wheelH}px`" role="listbox" aria-label="Choose a bottom">
+        <template x-for="(b, i) in bottoms" :key="b.id">
+          <div class="mm-wheel-item" :style="wheelStyle(i, bi, bottoms.length)" @click="pick('b', i)"
+               role="option" :aria-selected="i===bi" :title="b.name">
+            <img :src="b.imageCut" :alt="b.name" :class="!b.photoCut && 'mm-liftwhite'" draggable="false">
+          </div>
+        </template>
+        <button class="mm-arrow-round left" @click="step('b',-1)" aria-label="Previous bottom">‹</button>
+        <button class="mm-arrow-round right" @click="step('b',1)" aria-label="Next bottom">›</button>
+      </div>
+
+      <p class="text-center text-soft text-xs font-bold tracking-[0.2em] uppercase pb-2">Use the arrows — see how many matches you can make</p>
+    </section>
+
+    <!-- ============ OUTFIT SUMMARY BAR ============ -->
+    <section class="p-card p-5 md:p-6 mt-6" aria-label="Outfit summary">
+      <div class="flex flex-col md:flex-row md:items-center gap-5">
+        <div class="flex-1 min-w-0">
+          <p class="font-display font-bold truncate">
+            <span x-text="top ? top.name : ''"></span>
+            <span class="text-soft font-normal" x-text="top ? ' · ' + fmt(top.price) : ''"></span>
+          </p>
+          <p class="font-display font-bold truncate mt-1">
+            <span x-text="bottom ? bottom.name : ''"></span>
+            <span class="text-soft font-normal" x-text="bottom ? ' · ' + fmt(bottom.price) : ''"></span>
+          </p>
+          <div class="flex flex-wrap gap-2 mt-3" aria-label="Size for both pieces">
+            <template x-for="s in sizes" :key="s">
+              <button class="chip !py-1.5 !px-3.5 text-xs" :class="size===s && 'on'" @click="size=s" x-text="s"></button>
+            </template>
+          </div>
+        </div>
+        <div class="text-left md:text-right shrink-0">
+          <p class="text-2xl font-extrabold" x-text="fmt(total)"></p>
+          <p class="text-xs text-soft"><span class="line-through" x-text="fmt(totalMrp)"></span>
+            <span class="text-mint font-bold ml-1" x-text="'Save ' + fmt(totalMrp - total)"></span></p>
+        </div>
+        <div class="flex gap-3 shrink-0">
+          <button @click="shuffle()" class="btn-ghost px-5 py-3 text-sm" title="Surprise me with a matching outfit">🎲 Shuffle</button>
+          <button @click="addOutfit()" class="btn-gold px-6 py-3 text-sm tracking-wide">Add Whole Outfit to Bag</button>
+        </div>
+      </div>
+      <p class="text-[0.7rem] text-soft mt-3">Free shipping over ₹999 · COD available · 14-day returns</p>
+    </section>
+
+    <!-- ============ SUGGESTIONS ============ -->
+    <section class="p-card p-5 mt-6">
+      <h2 class="font-display font-bold text-lg">Goes well with <span class="text-gold" x-text="top && top.name"></span></h2>
+      <p class="text-soft text-xs mt-1">Bottoms our stylists match with this top — tap to try:</p>
+      <div class="flex gap-3 mt-3 flex-wrap">
+        <template x-for="s in suggestions" :key="s.i">
+          <button class="mm-thumb w-20" @click="pick('b', s.i)" :title="s.p.name">
+            <img :src="s.p.image" :alt="s.p.name" class="w-full aspect-[4/5] object-cover" loading="lazy">
+          </button>
+        </template>
+        <p x-show="!suggestions.length" class="text-soft text-sm">You already found the best match ✓</p>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/ui.js"></script>
+  <script src="/assets/js/mixmatch.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js" defer></script>
+</body>
+</html>

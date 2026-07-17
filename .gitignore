@@ -1,0 +1,19 @@
+# dependencies
+node_modules/
+
+# runtime data (orders, users, persisted products) — regenerates from the seed catalog
+backend/src/data/db/
+
+# admin-uploaded files
+backend/uploads/
+
+# local tunnel binary + logs (download cloudflared.exe again if needed for start-demo.bat)
+tools/cloudflared.exe
+tools/tunnel-url.txt
+
+# OS junk
+Thumbs.db
+.DS_Store
+
+# local editor/agent settings
+.claude/settings.local.json

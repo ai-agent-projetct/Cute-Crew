@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product — Cute Crew</title>
+  <meta name="description" content="Premium kids fashion product details.">
+  <meta name="theme-color" content="#e8352b">
+  <link rel="icon" href="/assets/img/favicon.png?v=8" type="image/png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/assets/js/tailwind.config.js"></script>
+  <link rel="stylesheet" href="/assets/css/theme.css">
+</head>
+<body class="font-body">
+  <div id="site-header"></div>
+
+  <main class="max-w-6xl mx-auto px-4 pt-6">
+    <nav id="crumbs" class="text-xs text-soft mb-5" aria-label="Breadcrumb"></nav>
+
+    <div id="pdp" class="grid md:grid-cols-2 gap-10">
+      <div class="skel aspect-[4/5]"></div>
+      <div class="space-y-4"><div class="skel h-8 w-3/4"></div><div class="skel h-5 w-1/2"></div><div class="skel h-24"></div></div>
+    </div>
+
+    <!-- Complete the look -->
+    <section id="complete-wrap" class="pt-16 hidden">
+      <p class="text-gold text-xs font-bold tracking-[0.3em] uppercase mb-1.5">Complete the look</p>
+      <h2 class="font-display font-extrabold text-2xl mb-6">Pairs Perfectly With</h2>
+      <div id="complete-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+    </section>
+
+    <!-- Related -->
+    <section class="pt-16">
+      <p class="text-gold text-xs font-bold tracking-[0.3em] uppercase mb-1.5">You may also like</p>
+      <h2 class="font-display font-extrabold text-2xl mb-6">Similar Styles</h2>
+      <div id="related-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+    </section>
+  </main>
+
+  <!-- Sticky mobile add-to-cart -->
+  <div id="sticky-cta" class="fixed bottom-[58px] left-0 right-0 z-50 md:hidden hidden border-t border-line header-blur p-3 flex gap-3 items-center">
+    <div class="pl-1">
+      <p id="sticky-price" class="font-extrabold"></p>
+      <p id="sticky-name" class="text-[0.68rem] text-soft truncate max-w-[130px]"></p>
+    </div>
+    <button id="sticky-add" class="btn-gold flex-1 py-3 text-sm">Add to Bag</button>
+  </div>
+
+  <div id="site-footer"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/ui.js"></script>
+  <script src="/assets/js/product.js"></script>
+</body>
+</html>

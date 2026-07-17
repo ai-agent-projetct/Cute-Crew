@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop Kids Fashion — Cute Crew</title>
+  <meta name="description" content="Shop premium kids clothing — boys, girls, newborn, toddlers. Filter by age, category, colour and price.">
+  <meta name="theme-color" content="#e8352b">
+  <link rel="icon" href="/assets/img/favicon.png?v=8" type="image/png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/assets/js/tailwind.config.js"></script>
+  <link rel="stylesheet" href="/assets/css/theme.css">
+</head>
+<body class="font-body">
+  <div id="site-header"></div>
+
+  <main class="max-w-7xl mx-auto px-4 pt-6">
+    <div class="flex items-center justify-between gap-3 flex-wrap">
+      <div>
+        <h1 id="shop-title" class="font-display font-extrabold text-2xl md:text-3xl">All Products</h1>
+        <p class="text-soft text-sm mt-1"><span id="shop-count">…</span> styles</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="btn-filters" class="btn-ghost px-4 py-2.5 text-sm md:hidden">Filters</button>
+        <select id="shop-sort" class="field !w-auto !py-2.5 text-sm" aria-label="Sort products">
+          <option value="">Popularity</option>
+          <option value="new">Newest First</option>
+          <option value="price_asc">Price: Low to High</option>
+          <option value="price_desc">Price: High to Low</option>
+          <option value="rating">Top Rated</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-[220px_1fr] gap-8 mt-6">
+      <!-- Filters -->
+      <aside id="filters" class="hidden md:block space-y-7 md:sticky md:top-32 self-start" aria-label="Filters">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-soft mb-3">Gender</p>
+          <div class="flex flex-wrap gap-2" data-filter="gender">
+            <button class="chip" data-v="boys">Boys</button>
+            <button class="chip" data-v="girls">Girls</button>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-soft mb-3">Age</p>
+          <div class="flex flex-wrap gap-2" data-filter="age">
+            <button class="chip" data-v="newborn">0–12 M</button>
+            <button class="chip" data-v="toddler">1–3 Y</button>
+            <button class="chip" data-v="kids">4–12 Y</button>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-soft mb-3">Category</p>
+          <div class="flex flex-wrap gap-2" data-filter="category">
+            <button class="chip" data-v="tops">Tops</button>
+            <button class="chip" data-v="bottoms">Bottoms</button>
+            <button class="chip" data-v="dresses">Dresses</button>
+            <button class="chip" data-v="partywear">Party</button>
+            <button class="chip" data-v="winter">Winter</button>
+            <button class="chip" data-v="nightwear">Night</button>
+            <button class="chip" data-v="school">School</button>
+            <button class="chip" data-v="newborn">Newborn</button>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-soft mb-3">Price</p>
+          <div class="flex flex-wrap gap-2" data-filter="price">
+            <button class="chip" data-v="0-599">Under ₹599</button>
+            <button class="chip" data-v="600-999">₹600–999</button>
+            <button class="chip" data-v="1000-1599">₹1000–1599</button>
+            <button class="chip" data-v="1600-9999">₹1600+</button>
+          </div>
+        </div>
+        <button id="btn-clear" class="text-sm text-gold hover:underline">Clear all filters</button>
+      </aside>
+
+      <!-- Grid -->
+      <section aria-label="Products">
+        <div id="shop-grid" class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div class="skel aspect-[3/4]"></div><div class="skel aspect-[3/4]"></div><div class="skel aspect-[3/4]"></div>
+          <div class="skel aspect-[3/4]"></div><div class="skel aspect-[3/4]"></div><div class="skel aspect-[3/4]"></div>
+        </div>
+        <div id="shop-empty" class="hidden text-center py-24">
+          <p class="text-5xl mb-4">🧸</p>
+          <p class="font-display font-bold text-xl">Nothing here yet</p>
+          <p class="text-soft text-sm mt-2">Try clearing a filter or two.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/ui.js"></script>
+  <script src="/assets/js/shop.js"></script>
+</body>
+</html>

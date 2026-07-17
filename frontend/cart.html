@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Bag — Cute Crew</title>
+  <meta name="description" content="Your Cute Crew shopping bag.">
+  <meta name="theme-color" content="#e8352b">
+  <link rel="icon" href="/assets/img/favicon.png?v=8" type="image/png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/assets/js/tailwind.config.js"></script>
+  <link rel="stylesheet" href="/assets/css/theme.css">
+</head>
+<body class="font-body">
+  <div id="site-header"></div>
+
+  <main class="max-w-6xl mx-auto px-4 pt-8">
+    <h1 class="font-display font-extrabold text-2xl md:text-3xl">Shopping Bag</h1>
+
+    <div id="cart-empty" class="hidden text-center py-24">
+      <p class="text-5xl mb-4">🛍️</p>
+      <p class="font-display font-bold text-xl">Your bag is empty</p>
+      <p class="text-soft text-sm mt-2 mb-6">Little wardrobes need big love. Start exploring!</p>
+      <a href="/shop.html" class="btn-gold px-8 py-3.5 text-sm">Start Shopping</a>
+    </div>
+
+    <div id="cart-body" class="grid lg:grid-cols-[1fr_360px] gap-8 mt-6">
+      <section id="cart-lines" class="space-y-4" aria-label="Bag items"></section>
+
+      <aside class="space-y-4 lg:sticky lg:top-32 self-start">
+        <div class="p-card p-5">
+          <p class="text-xs font-bold uppercase tracking-widest text-soft mb-3">Apply Coupon</p>
+          <form id="coupon-form" class="flex gap-2">
+            <input id="coupon-input" class="field !py-2.5 text-sm uppercase" placeholder="Try WELCOME10">
+            <button class="btn-ghost px-4 text-sm shrink-0">Apply</button>
+          </form>
+          <p id="coupon-msg" class="text-xs mt-2 hidden"></p>
+        </div>
+
+        <div class="p-card p-5" id="price-box" aria-label="Price details">
+          <p class="text-xs font-bold uppercase tracking-widest text-soft mb-4">Price Details</p>
+          <div class="space-y-2.5 text-sm" id="price-rows"></div>
+          <div class="divider my-4"></div>
+          <div class="flex justify-between font-extrabold text-lg"><span>Total</span><span id="price-total"></span></div>
+          <p class="text-mint text-xs mt-1.5" id="price-save"></p>
+          <a href="/checkout.html" id="btn-checkout" class="btn-gold w-full py-4 mt-5 text-sm block text-center">Proceed to Checkout</a>
+          <p class="text-center text-[0.7rem] text-soft mt-3">🔒 Secure checkout · COD & UPI available</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/ui.js"></script>
+  <script src="/assets/js/cart.js"></script>
+</body>
+</html>
