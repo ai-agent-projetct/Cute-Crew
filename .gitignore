@@ -17,3 +17,6 @@ Thumbs.db
 
 # local editor/agent settings
 .claude/settings.local.json
+
+# stray non-project files
+daily-production-summary.xlsx

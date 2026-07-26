@@ -22,53 +22,12 @@
 <body class="font-body">
   <div id="site-header"></div>
 
-  <!-- ================= 3D SCROLLABLE HERO ================= -->
-  <section id="hero-wrap" aria-label="Featured collections">
-    <div id="hero-sticky">
-      <video id="hero-video" class="absolute inset-0 w-full h-full object-cover" muted playsinline preload="auto" src="/assets/video/hero.mp4"></video>
-      <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/25 to-black/70" aria-hidden="true"></div>
-      <canvas id="hero-canvas"></canvas>
-
-      <div class="hero-caption show">
-        <p class="text-gold text-xs md:text-sm font-bold tracking-[0.4em] uppercase mb-4">New Season · 2026</p>
-        <h1 class="font-display font-extrabold text-4xl md:text-7xl leading-tight max-w-4xl">Luxury Fashion<br><span class="text-gradient">for Little Ones</span></h1>
-        <p class="text-soft mt-5 max-w-md text-sm md:text-base">Scroll to explore the collection — soft fabrics, playful colours, premium details.</p>
-        <div class="cta flex flex-wrap gap-3 justify-center mt-8">
-          <a href="/shop.html?gender=boys" class="btn-gold px-8 py-3.5 text-sm">Shop Boys</a>
-          <a href="/shop.html?gender=girls" class="btn-ghost px-8 py-3.5 text-sm">Shop Girls</a>
-        </div>
-      </div>
-
-      <div class="hero-caption">
-        <p class="text-babypink text-xs md:text-sm font-bold tracking-[0.4em] uppercase mb-4">Tiny & Precious</p>
-        <h2 class="font-display font-extrabold text-4xl md:text-6xl max-w-3xl leading-tight">Newborn & Toddler <span class="text-gradient">Essentials</span></h2>
-        <p class="text-soft mt-5 max-w-md text-sm md:text-base">Organic cotton rompers and sets — gentle on skin, made for cuddles.</p>
-        <div class="cta flex flex-wrap gap-3 justify-center mt-8">
-          <a href="/shop.html?age=newborn" class="btn-gold px-8 py-3.5 text-sm">Shop Newborn</a>
-          <a href="/shop.html?age=toddler" class="btn-ghost px-8 py-3.5 text-sm">Shop Toddlers</a>
-        </div>
-      </div>
-
-      <div class="hero-caption">
-        <p class="text-mint text-xs md:text-sm font-bold tracking-[0.4em] uppercase mb-4">Outfit Builder</p>
-        <h2 class="font-display font-extrabold text-4xl md:text-6xl max-w-3xl leading-tight">Mix. Match. <span class="text-gradient">Magic.</span></h2>
-        <p class="text-soft mt-5 max-w-md text-sm md:text-base">Pick a top, pick a bottom — see the outfit instantly and add both in one tap.</p>
-        <div class="cta mt-8">
-          <a href="/mix-match.html" class="btn-gold px-8 py-3.5 text-sm">Build an Outfit</a>
-        </div>
-      </div>
-
-      <div class="hero-caption">
-        <p class="text-pastelblue text-xs md:text-sm font-bold tracking-[0.4em] uppercase mb-4">The Full Collection</p>
-        <h2 class="font-display font-extrabold text-4xl md:text-6xl max-w-3xl leading-tight">Party · Winter · School <span class="text-gradient">& Everyday</span></h2>
-        <div class="cta mt-8">
-          <a href="/shop.html" class="btn-gold px-8 py-3.5 text-sm">Explore All Products</a>
-        </div>
-      </div>
-
-      <div class="hero-progress" aria-hidden="true"><i></i></div>
-      <div class="scroll-hint" aria-hidden="true"><div class="mouse"></div><span>Scroll</span></div>
-    </div>
+  <!-- ================= HERO BANNER (autoplay-loop logo video) ================= -->
+  <section id="hero-banner" aria-label="Cute Crew">
+    <video id="hero-video" autoplay muted loop playsinline preload="auto">
+      <source src="/assets/video/hero.webm?v=4" type="video/webm">
+      <source src="/assets/video/hero-new.mp4?v=4" type="video/mp4">
+    </video>
   </section>
 
   <!-- ================= NEW DROP MODEL WALL (section two) ================= -->
@@ -251,14 +210,12 @@
 
   <div id="site-footer"></div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.149.0/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script src="/assets/js/api.js"></script>
   <script src="/assets/js/ui.js"></script>
-  <script src="/assets/js/hero3d.js"></script>
   <script src="/assets/js/home.js"></script>
 </body>
 </html>
