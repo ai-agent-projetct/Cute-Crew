@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — Cute Crew</title>
+  <meta name="description" content="Secure checkout — COD, UPI and cards.">
+  <meta name="theme-color" content="#e8352b">
+  <link rel="icon" href="/assets/img/favicon.png?v=8" type="image/png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/assets/js/tailwind.config.js"></script>
+  <link rel="stylesheet" href="/assets/css/theme.css">
+</head>
+<body class="font-body">
+  <div id="site-header"></div>
+
+  <main class="max-w-5xl mx-auto px-4 pt-8">
+    <h1 class="font-display font-extrabold text-2xl md:text-3xl">Checkout</h1>
+
+    <!-- Success state -->
+    <div id="order-done" class="hidden text-center py-20">
+      <p class="text-6xl mb-4">🎉</p>
+      <p class="font-display font-extrabold text-2xl">Order placed!</p>
+      <p class="text-soft mt-2">Order ID: <span id="order-id" class="text-gold font-bold"></span></p>
+      <p class="text-soft text-sm mt-1">We'll WhatsApp you tracking updates. Thank you for shopping with Cute Crew ✦</p>
+      <a href="/shop.html" class="btn-gold px-8 py-3.5 text-sm inline-block mt-8">Continue Shopping</a>
+    </div>
+
+    <div id="checkout-body" class="grid lg:grid-cols-[1fr_340px] gap-8 mt-6">
+      <form id="checkout-form" class="space-y-6">
+        <div class="p-card p-6">
+          <p class="font-display font-bold mb-4">1 · Contact</p>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <input class="field" name="name" placeholder="Full name *" required>
+            <input class="field" name="phone" placeholder="Phone (10 digits) *" pattern="[0-9]{10}" required>
+            <input class="field sm:col-span-2" name="email" type="email" placeholder="Email (for invoice)">
+          </div>
+        </div>
+        <div class="p-card p-6">
+          <p class="font-display font-bold mb-4">2 · Delivery Address</p>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <input class="field sm:col-span-2" name="address" placeholder="House no, street, area *" required>
+            <input class="field" name="city" placeholder="City *" required>
+            <input class="field" name="pincode" placeholder="Pincode *" pattern="[0-9]{6}" required>
+          </div>
+        </div>
+        <div class="p-card p-6">
+          <p class="font-display font-bold mb-4">3 · Payment</p>
+          <div class="space-y-2.5">
+            <label class="flex items-center gap-3 p-3.5 rounded-xl border border-gold bg-gold/5 cursor-pointer">
+              <input type="radio" name="payment" value="cod" checked class="accent-[#e8352b]">
+              <span class="font-bold text-sm">Cash on Delivery</span>
+              <span class="ml-auto text-xs text-mint">Recommended</span>
+            </label>
+            <label class="flex items-center gap-3 p-3.5 rounded-xl border border-line cursor-not-allowed opacity-50">
+              <input type="radio" name="payment" value="upi" disabled>
+              <span class="font-bold text-sm">UPI / Cards / Wallet</span>
+              <span class="ml-auto text-xs text-soft">Enable Stripe/Razorpay keys in admin</span>
+            </label>
+          </div>
+        </div>
+        <button class="btn-gold w-full py-4 text-sm tracking-wide" id="btn-place">Place Order</button>
+        <p id="checkout-err" class="text-red-400 text-sm hidden"></p>
+      </form>
+
+      <aside class="p-card p-5 self-start lg:sticky lg:top-32">
+        <p class="text-xs font-bold uppercase tracking-widest text-soft mb-4">Order Summary</p>
+        <div id="sum-lines" class="space-y-3 text-sm"></div>
+        <div class="divider my-4"></div>
+        <div id="sum-rows" class="space-y-2 text-sm"></div>
+        <div class="flex justify-between font-extrabold text-lg mt-3"><span>Total</span><span id="sum-total"></span></div>
+      </aside>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/ui.js"></script>
+  <script src="/assets/js/checkout.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "Cute Crew — Premium Kids Fashion",
+  "short_name": "Cute Crew",
+  "description": "Playful premium fashion for little ones. Mix & match outfits, party wear, newborn essentials.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#e8352b",
+  "icons": [
+    { "src": "/assets/img/favicon.png", "sizes": "64x64", "type": "image/png", "purpose": "any" }
+  ]
+}

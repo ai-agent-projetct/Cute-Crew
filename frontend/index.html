@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cute Crew — Premium Kids Fashion | Boys, Girls, Newborn & Toddlers</title>
+  <meta name="description" content="Premium luxury children's clothing. Shop boys, girls, newborn and toddler fashion — mix & match outfits, party wear and more. Free shipping over ₹999, COD available.">
+  <meta property="og:title" content="Cute Crew — Premium Kids Fashion">
+  <meta property="og:description" content="Luxury fashion for little ones. Mix & match outfits, party wear, newborn essentials.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#e8352b">
+  <link rel="icon" href="/assets/img/favicon.png?v=8" type="image/png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/assets/js/tailwind.config.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <link rel="stylesheet" href="/assets/css/theme.css">
+</head>
+<body class="font-body">
+  <div id="site-header"></div>
+
+  <!-- ================= HERO BANNER (autoplay-loop logo video) — hidden, re-enable by uncommenting =================
+  <section id="hero-banner" aria-label="Cute Crew">
+    <video id="hero-video" autoplay muted loop playsinline preload="auto">
+      <source src="/assets/video/hero.webm?v=4" type="video/webm">
+      <source src="/assets/video/hero-new.mp4?v=4" type="video/mp4">
+    </video>
+  </section>
+  -->
+
+  <!-- ================= BANNER CAROUSEL (4 slides, one at a time) ================= -->
+  <section aria-label="Featured banners">
+    <div class="swiper" id="banner-swiper">
+      <div class="swiper-wrapper" id="banner-track">
+        <div class="swiper-slide"><div class="skel" style="aspect-ratio:16/6"></div></div>
+      </div>
+      <div class="swiper-pagination"></div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+    </div>
+  </section>
+
+  <!-- ================= NEW DROP MODEL WALL (section two) ================= -->
+  <section class="relative" aria-labelledby="drop-h">
+    <div class="max-w-7xl mx-auto px-4 pt-10 pb-5 flex items-end justify-between">
+      <div>
+        <p class="text-gold text-xs font-bold tracking-[0.3em] uppercase mb-1.5">New Drop · In Stock Now</p>
+        <h2 id="drop-h" class="font-display font-extrabold text-2xl md:text-3xl">Shop the Look</h2>
+      </div>
+      <a href="/shop.html?sort=new" class="text-sm text-soft hover:text-gold transition-colors shrink-0">View all →</a>
+    </div>
+    <div class="swiper" id="spotlight-swiper">
+      <div class="swiper-wrapper" id="spotlight-track"></div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+    </div>
+  </section>
+
+  <!-- ================= QUICK CATEGORY STRIP (Next-style) — hidden, re-enable by uncommenting =================
+  <section class="max-w-7xl mx-auto px-4 pt-10" aria-labelledby="quick-h">
+    <h2 id="quick-h" class="font-display font-extrabold text-xl md:text-2xl text-center mb-1">Shop by Type</h2>
+    <p class="text-soft text-sm text-center mb-6">Tap a category to start exploring</p>
+    <div class="quick-strip">
+      <a class="quick-item" href="/shop.html"><div class="quick-ring"><img src="/img/g/tshirt.svg?hex=%23e8352b&accent=%23ffffff&bg=none" alt="Shop All" loading="lazy"></div><p>Shop All</p></a>
+      <a class="quick-item" href="/shop.html?gender=boys"><div class="quick-ring"><img src="/img/g/tshirt.svg?hex=%239cc6ff&accent=%23eaf3ff&motif=bolt&bg=none" alt="Boys" loading="lazy"></div><p>Boys</p></a>
+      <a class="quick-item" href="/shop.html?gender=girls"><div class="quick-ring"><img src="/img/g/dress.svg?hex=%23f7a8c4&accent=%23e6c586&motif=flower&bg=none" alt="Girls" loading="lazy"></div><p>Girls</p></a>
+      <a class="quick-item" href="/shop.html?category=tops"><div class="quick-ring"><img src="/img/g/tshirt.svg?hex=%23ffd98a&accent=%23e05c5c&motif=star&bg=none" alt="T-Shirts" loading="lazy"></div><p>T-Shirts</p></a>
+      <a class="quick-item" href="/shop.html?category=bottoms"><div class="quick-ring"><img src="/img/g/pants.svg?hex=%237da4d8&accent=%23dbe9fb&bg=none" alt="Bottoms" loading="lazy"></div><p>Bottoms</p></a>
+      <a class="quick-item" href="/shop.html?category=dresses"><div class="quick-ring"><img src="/img/g/dress.svg?hex=%23c9b8f0&accent=%23ffffff&motif=star&bg=none" alt="Dresses" loading="lazy"></div><p>Dresses</p></a>
+      <a class="quick-item" href="/shop.html?age=newborn"><div class="quick-ring"><img src="/img/g/romper.svg?hex=%23f2e8d8&accent=%23c9a86a&motif=bear&bg=none" alt="Newborn" loading="lazy"></div><p>Newborn</p></a>
+      <a class="quick-item" href="/shop.html?age=toddler"><div class="quick-ring"><img src="/img/g/hoodie.svg?hex=%2398e0c0&accent=%23ffffff&motif=cloud&bg=none" alt="Toddlers" loading="lazy"></div><p>Toddlers</p></a>
+      <a class="quick-item" href="/shop.html?category=winter"><div class="quick-ring"><img src="/img/g/jacket.svg?hex=%23a8c8e8&accent=%23e6c586&motif=star&bg=none" alt="Winter" loading="lazy"></div><p>Winter</p></a>
+      <a class="quick-item" href="/shop.html?category=partywear"><div class="quick-ring"><img src="/img/g/dress.svg?hex=%23ffd98a&accent=%23e07a9a&motif=crown&bg=none" alt="Party" loading="lazy"></div><p>Party</p></a>
+      <a class="quick-item" href="/shop.html?category=nightwear"><div class="quick-ring"><img src="/img/g/pants.svg?hex=%236b7fae&accent=%23ffd98a&bg=none" alt="Nightwear" loading="lazy"></div><p>Nightwear</p></a>
+      <a class="quick-item" href="/mix-match.html"><div class="quick-ring"><img src="/img/g/skirt.svg?hex=%2398e0c0&accent=%23eafff5&bg=none" alt="Mix & Match" loading="lazy"></div><p>Mix &amp; Match</p></a>
+    </div>
+  </section>
+  -->
+
+  <!-- ================= PERKS MARQUEE ================= -->
+  <div class="border-y border-line bg-surface py-3 overflow-hidden" aria-hidden="true">
+    <div class="marquee text-xs font-bold tracking-[0.25em] uppercase text-soft">
+      <span>✦ Free shipping over ₹999</span><span>✦ Cash on delivery</span><span>✦ 14-day easy returns</span><span>✦ Earn reward points</span><span>✦ Organic cotton</span>
+      <span>✦ Free shipping over ₹999</span><span>✦ Cash on delivery</span><span>✦ 14-day easy returns</span><span>✦ Earn reward points</span><span>✦ Organic cotton</span>
+    </div>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4">
+
+    <!-- ================= CATEGORIES — hidden, re-enable by uncommenting =================
+    <section class="pt-16 reveal" aria-labelledby="cat-h">
+      <div class="flex items-end justify-between mb-6">
+        <div>
+          <p class="text-gold text-xs font-bold tracking-[0.3em] uppercase mb-1.5">Shop by Category</p>
+          <h2 id="cat-h" class="font-display font-extrabold text-2xl md:text-3xl">Find Their Style</h2>
+        </div>
+        <a href="/shop.html" class="text-sm text-soft hover:text-gold transition-colors shrink-0">View all →</a>
+      </div>
+      <div id="cat-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div class="skel aspect-[4/5]"></div><div class="skel aspect-[4/5]"></div><div class="skel aspect-[4/5]"></div><div class="skel aspect-[4/5]"></div>
+      </div>
+    </section>
+    -->
+
+    <!-- ================= SHOP BY AGE — hidden, re-enable by uncommenting =================
+    <section class="pt-16 reveal" aria-labelledby="age-h">
+      <p class="text-gold text-xs font-bold tracking-[0.3em] uppercase mb-1.5">Shop by Age</p>
+      <h2 id="age-h" class="font-display font-extrabold text-2xl md:text-3xl mb-6">From First Days to Big Kid Days</h2>
+      <div id="age-grid" class="grid md:grid-cols-3 gap-4"></div>
+    </section>
+    -->
+
+    <!-- ================= MIX & MATCH BANNER ================= -->
+    <section class="pt-16 reveal">
+      <div class="mm-stage p-8 md:p-12 grid md:grid-cols-2 gap-8 items-center relative overflow-hidden">
+        <div class="absolute -right-16 -top-16 w-64 h-64 rounded-full bg-gold/5 blur-2xl" aria-hidden="true"></div>
+        <div>
+          <p class="text-mint text-xs font-bold tracking-[0.3em] uppercase mb-2">Outfit Builder</p>
+          <h2 class="font-display font-extrabold text-3xl md:text-4xl leading-tight">Mix & Match<br><span class="text-gradient">in 3 easy steps</span></h2>
+          <ol class="mt-6 space-y-3 text-sm text-soft">
+            <li class="flex gap-3 items-center"><span class="w-7 h-7 rounded-full bg-gold text-ink font-extrabold flex items-center justify-center shrink-0">1</span> Pick a top they'll love</li>
+            <li class="flex gap-3 items-center"><span class="w-7 h-7 rounded-full bg-gold text-ink font-extrabold flex items-center justify-center shrink-0">2</span> Pick a matching bottom</li>
+            <li class="flex gap-3 items-center"><span class="w-7 h-7 rounded-full bg-gold text-ink font-extrabold flex items-center justify-center shrink-0">3</span> Add the whole outfit to your bag</li>
+          </ol>
+          <div class="flex gap-3 mt-8">
+            <a href="/mix-match.html?gender=girls" class="btn-gold px-6 py-3 text-sm">Girls Outfits</a>
+            <a href="/mix-match.html?gender=boys" class="btn-ghost px-6 py-3 text-sm">Boys Outfits</a>
+          </div>
+        </div>
+        <div class="flex justify-center gap-4 items-center" aria-hidden="true">
+          <div class="w-36 md:w-44 mt-6">
+            <img src="/assets/img/real/mm-girls-new.jpeg" alt="Girls outfit" class="rounded-2xl border border-line w-full aspect-[4/5] object-cover" loading="lazy">
+          </div>
+          <div class="text-gold text-2xl font-bold">+</div>
+          <div class="w-36 md:w-44 mb-6">
+            <img src="/assets/img/real/mm-boys-new.jpeg" alt="Boys outfit" class="rounded-2xl border border-line w-full aspect-[4/5] object-cover" loading="lazy">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CAMPAIGN FILMS — hidden, re-enable by uncommenting =================
+    <section class="pt-16 reveal" aria-labelledby="film-h">
+      <div class="flex items-end justify-between mb-6">
+        <div>
+          <p class="text-gold text-xs font-bold tracking-[0.3em] uppercase mb-1.5">The Campaign · Spring '26</p>
+          <h2 id="film-h" class="font-display font-extrabold text-2xl md:text-3xl">Sunny Days, Little Ways</h2>
+        </div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4">
+        <a href="/shop.html?gender=girls" class="tile-card block group relative">
+          <video class="w-full aspect-video object-cover" src="/assets/video/campaign-girls.mp4"
+                 poster="/assets/img/real/lb-meadow.png" autoplay muted loop playsinline preload="metadata"></video>
+          <div class="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/80 to-transparent">
+            <p class="font-display font-extrabold text-lg">Girls Campaign</p>
+            <p class="text-xs text-gold mt-0.5">Shop the collection →</p>
+          </div>
+        </a>
+        <a href="/shop.html?gender=boys" class="tile-card block group relative">
+          <video class="w-full aspect-video object-cover" src="/assets/video/campaign-boys.mp4"
+                 poster="/assets/img/real/lb-street.png" autoplay muted loop playsinline preload="metadata"></video>
+          <div class="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/80 to-transparent">
+            <p class="font-display font-extrabold text-lg">Boys Campaign</p>
+            <p class="text-xs text-gold mt-0.5">Shop the collection →</p>
+          </div>
+        </a>
+      </div>
+    </section>
+    -->
+
+    <!-- ================= TRENDING ================= -->
+    <section class="pt-16 reveal" aria-labelledby="trend-h">
+      <div class="flex items-end justify-between mb-6">
+        <div>
+          <p class="text-gold text-xs font-bold tracking-[0.3em] uppercase mb-1.5">Most Loved</p>
+          <h2 id="trend-h" class="font-display font-extrabold text-2xl md:text-3xl">Trending Now</h2>
+        </div>
+        <a href="/shop.html?sort=rating" class="text-sm text-soft hover:text-gold transition-colors shrink-0">View all →</a>
+      </div>
+      <div class="swiper" id="trending-swiper">
+        <div class="swiper-wrapper" id="trending-track"></div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+      </div>
+    </section>
+
+    <!-- ================= NEW ARRIVALS ================= -->
+    <section class="pt-16 reveal" aria-labelledby="new-h">
+      <div class="flex items-end justify-between mb-6">
+        <div>
+          <p class="text-gold text-xs font-bold tracking-[0.3em] uppercase mb-1.5">Just Dropped</p>
+          <h2 id="new-h" class="font-display font-extrabold text-2xl md:text-3xl">New Arrivals</h2>
+        </div>
+        <a href="/shop.html?sort=new" class="text-sm text-soft hover:text-gold transition-colors shrink-0">View all →</a>
+      </div>
+      <div id="new-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="skel aspect-[3/4]"></div><div class="skel aspect-[3/4]"></div><div class="skel aspect-[3/4]"></div><div class="skel aspect-[3/4]"></div>
+      </div>
+    </section>
+
+    <!-- ================= REVIEWS ================= -->
+    <section class="pt-16 reveal" aria-labelledby="rev-h">
+      <p class="text-gold text-xs font-bold tracking-[0.3em] uppercase mb-1.5">Happy Parents</p>
+      <h2 id="rev-h" class="font-display font-extrabold text-2xl md:text-3xl mb-6">Loved by 10,000+ Families</h2>
+      <div class="grid md:grid-cols-3 gap-4">
+        <figure class="p-card p-6">
+          <p class="text-gold tracking-widest">★★★★★</p>
+          <blockquote class="text-sm text-soft mt-3 leading-relaxed">"The mix & match builder is genius — my daughter picks her own outfits now and everything actually goes together."</blockquote>
+          <figcaption class="mt-4 text-sm font-bold">Priya M. <span class="text-mint font-normal text-xs ml-1">✓ Verified purchase</span></figcaption>
+        </figure>
+        <figure class="p-card p-6">
+          <p class="text-gold tracking-widest">★★★★★</p>
+          <blockquote class="text-sm text-soft mt-3 leading-relaxed">"Softest rompers we've ever bought. Survived dozens of washes and still looks brand new."</blockquote>
+          <figcaption class="mt-4 text-sm font-bold">Arjun & Kavya <span class="text-mint font-normal text-xs ml-1">✓ Verified purchase</span></figcaption>
+        </figure>
+        <figure class="p-card p-6">
+          <p class="text-gold tracking-widest">★★★★★</p>
+          <blockquote class="text-sm text-soft mt-3 leading-relaxed">"Fast delivery, beautiful packaging, and the party dress got so many compliments. Premium quality."</blockquote>
+          <figcaption class="mt-4 text-sm font-bold">Sneha R. <span class="text-mint font-normal text-xs ml-1">✓ Verified purchase</span></figcaption>
+        </figure>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/ui.js"></script>
+  <script src="/assets/js/home.js"></script>
+</body>
+</html>
