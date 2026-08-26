@@ -75,7 +75,7 @@ function cardHTML(p) {
       <svg width="16" height="16" viewBox="0 0 24 24" fill="${wished ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21.2l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
     </button>
     <a href="/product.html?id=${p.id}" class="block">
-      <div class="aspect-[4/5] overflow-hidden bg-surface product-thumb">
+      <div class="aspect-[4/5] overflow-hidden product-thumb">
         <img src="${p.image}" alt="${p.name}" loading="lazy" class="w-full h-full object-cover">
       </div>
       <div class="p-3.5">

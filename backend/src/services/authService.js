@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const store = require('../utils/store-mysql');
+const store = require('../utils/store');
 const config = require('../config');
 
 function hash(password) {
@@ -16,16 +16,10 @@ function verify(password, stored) {
   return crypto.timingSafeEqual(Buffer.from(key, 'hex'), Buffer.from(test, 'hex'));
 }
 
-async function ensureAdminExists() {
-  const admin = await store.getUserByEmail(config.admin.email);
-  if (!admin) {
-    await store.createUser({
-      email: config.admin.email,
-      name: config.admin.name,
-      password: hash(config.admin.password),
-      role: 'admin'
-    });
-  }
+function users() {
+  return store.read('users', () => [
+    { id: 1, email: config.admin.email, name: config.admin.name, role: 'admin', password: hash(config.admin.password) }
+  ]);
 }
 
 function sign(user) {
@@ -34,32 +28,25 @@ function sign(user) {
   });
 }
 
-async function login(email, password) {
-  await ensureAdminExists();
-  const u = await store.getUserByEmail(email);
+function login(email, password) {
+  const u = users().find((x) => x.email.toLowerCase() === String(email || '').toLowerCase());
   if (!u || !verify(password || '', u.password)) {
     throw Object.assign(new Error('Invalid email or password'), { status: 401 });
   }
   return { token: sign(u), user: { id: u.id, email: u.email, name: u.name, role: u.role } };
 }
 
-async function register({ name, email, password }) {
+function register({ name, email, password }) {
   if (!name || !email || !password || password.length < 6) {
     throw Object.assign(new Error('Name, email and a password of 6+ characters are required'), { status: 400 });
   }
-
-  const existing = await store.getUserByEmail(email);
-  if (existing) {
+  const list = users().slice();
+  if (list.some((x) => x.email.toLowerCase() === email.toLowerCase())) {
     throw Object.assign(new Error('An account with this email already exists'), { status: 409 });
   }
-
-  const u = await store.createUser({
-    email,
-    name,
-    password: hash(password),
-    role: 'customer'
-  });
-
+  const u = { id: list.reduce((m, x) => Math.max(m, x.id), 0) + 1, email, name, role: 'customer', password: hash(password), createdAt: new Date().toISOString() };
+  list.push(u);
+  store.write('users', list);
   return { token: sign(u), user: { id: u.id, email: u.email, name: u.name, role: u.role } };
 }
 
@@ -68,59 +55,44 @@ function sanitize(u) {
   return { id: u.id, email: u.email, name: u.name, role: u.role, createdAt: u.createdAt || null };
 }
 
-async function listUsers() {
-  const users = await store.getAllUsers();
-  return users.map(sanitize);
+function listUsers() {
+  return users().map(sanitize);
 }
 
-async function createUser({ name, email, password, role }) {
-  const { user } = await register({ name, email, password });
+function createUser({ name, email, password, role }) {
+  const { user } = register({ name, email, password });
   if (role === 'admin') return updateUser(user.id, { role: 'admin' });
   return user;
 }
 
-async function updateUser(id, { name, role, password }) {
-  const u = await store.getUserById(Number(id));
+function updateUser(id, { name, role, password }) {
+  const list = users().slice();
+  const u = list.find((x) => x.id === Number(id));
   if (!u) return null;
-
-  const updates = {};
-  if (name) updates.name = name;
-
+  if (name) u.name = name;
   if (role && ['admin', 'customer'].includes(role)) {
-    if (u.role === 'admin' && role !== 'admin') {
-      const allUsers = await store.getAllUsers();
-      const adminCount = allUsers.filter(x => x.role === 'admin').length;
-      if (adminCount === 1) {
-        throw Object.assign(new Error('Cannot demote the only admin'), { status: 400 });
-      }
+    if (u.role === 'admin' && role !== 'admin' && list.filter((x) => x.role === 'admin').length === 1) {
+      throw Object.assign(new Error('Cannot demote the only admin'), { status: 400 });
     }
-    updates.role = role;
+    u.role = role;
   }
-
   if (password) {
     if (password.length < 6) throw Object.assign(new Error('Password must be 6+ characters'), { status: 400 });
-    updates.password = hash(password);
+    u.password = hash(password);
   }
-
-  const updated = await store.updateUser(Number(id), updates);
-  return sanitize(updated);
+  store.write('users', list);
+  return sanitize(u);
 }
 
-async function removeUser(id, actingId) {
-  const u = await store.getUserById(Number(id));
+function removeUser(id, actingId) {
+  const list = users().slice();
+  const u = list.find((x) => x.id === Number(id));
   if (!u) return false;
-
   if (u.id === Number(actingId)) throw Object.assign(new Error('You cannot delete your own account'), { status: 400 });
-
-  if (u.role === 'admin') {
-    const allUsers = await store.getAllUsers();
-    const adminCount = allUsers.filter(x => x.role === 'admin').length;
-    if (adminCount === 1) {
-      throw Object.assign(new Error('Cannot delete the only admin'), { status: 400 });
-    }
+  if (u.role === 'admin' && list.filter((x) => x.role === 'admin').length === 1) {
+    throw Object.assign(new Error('Cannot delete the only admin'), { status: 400 });
   }
-
-  await store.deleteUser(Number(id));
+  store.write('users', list.filter((x) => x.id !== u.id));
   return true;
 }
 

@@ -136,7 +136,57 @@ const products = [
   P({ name: 'Tiny Explorer Tee', gender: 'boys', ageGroup: 'toddler', category: 'tops', type: 'tshirt', color: 'Sage Green', hex: '#b8d4a8', accent: '#5a6e4e', motif: 'bear', price: 549, rating: 4.5 }),
   P({ name: 'Cocoa Snug Hoodie', gender: 'unisex', category: 'winter', type: 'hoodie', color: 'Warm Taupe', hex: '#c9ab8e', accent: '#fff1e2', motif: 'bear', price: 1249, rating: 4.6 }),
   P({ name: 'Starry Night Tee', gender: 'unisex', category: 'nightwear', type: 'tshirt', color: 'Midnight Blue', hex: '#6b7fae', accent: '#ffd98a', motif: 'star', price: 699, rating: 4.5 }),
-  P({ name: 'School Smart Pants', gender: 'unisex', category: 'school', type: 'pants', color: 'Charcoal', hex: '#4d5361', accent: '#b8c0d0', price: 749, rating: 4.4 })
+  P({ name: 'School Smart Pants', gender: 'unisex', category: 'school', type: 'pants', color: 'Charcoal', hex: '#4d5361', accent: '#b8c0d0', price: 749, rating: 4.4 }),
+  // ---------------- MUST-HAVE PICKS — GIRLS, UNDER 4 (1–3Y) ----------------
+  P({ name: 'Yellow and White Cotton Printed', gender: 'girls', ageGroup: 'toddler', category: 'dresses', type: 'dress', color: 'White', hex: '#f2f0ea', motif: 'star', price: 399, photo: `${REAL}/mk-75.png` }),
+  P({ name: 'Pink Cotton Cat and Floral', gender: 'girls', ageGroup: 'toddler', category: 'dresses', type: 'dress', color: 'Pink', hex: '#f7a8c4', motif: 'heart', price: 399, photo: `${REAL}/mk-76.png` }),
+  P({ name: 'Peach Cotton Circus Printed Dress', gender: 'girls', ageGroup: 'toddler', category: 'dresses', type: 'dress', color: 'Peach', hex: '#ffb98a', motif: 'flower', price: 399, photo: `${REAL}/mk-77.png` }),
+  P({ name: 'White Cotton Dress and Bloomers', gender: 'girls', ageGroup: 'toddler', category: 'dresses', type: 'dress', color: 'White', hex: '#f2f0ea', motif: 'star', price: 399, photo: `${REAL}/mk-78.png` }),
+  P({ name: 'Pink and White Cotton Striped', gender: 'girls', ageGroup: 'toddler', category: 'dresses', type: 'dress', color: 'White', hex: '#f2f0ea', motif: 'star', price: 399, photo: `${REAL}/mk-79.png` }),
+  P({ name: 'Rainbow Print Dress', gender: 'girls', ageGroup: 'toddler', category: 'dresses', type: 'dress', color: 'White', hex: '#f2f0ea', motif: 'star', price: 404, photo: `${REAL}/mk-80.png` }),
+  P({ name: 'Polka Dot Tulle Party Dress', gender: 'girls', ageGroup: 'toddler', category: 'dresses', type: 'dress', color: 'Pink', hex: '#f7a8c4', motif: 'heart', price: 404, photo: `${REAL}/mk-81.png` }),
+  P({ name: 'Embroidered Dress', gender: 'girls', ageGroup: 'toddler', category: 'dresses', type: 'dress', color: 'Peach', hex: '#ffb98a', motif: 'flower', price: 420, photo: `${REAL}/mk-82.png` }),
+  P({ name: 'Ice Cream Print Dress', gender: 'girls', ageGroup: 'toddler', category: 'dresses', type: 'dress', color: 'White', hex: '#f2f0ea', motif: 'star', price: 420, photo: `${REAL}/mk-83.png` }),
+  P({ name: 'Alphabet Applique Embroidered Dress', gender: 'girls', ageGroup: 'toddler', category: 'dresses', type: 'dress', color: 'Red', hex: '#e8736a', motif: 'heart', price: 420, photo: `${REAL}/mk-84.png` }),
+  P({ name: 'Cotton Color block Long Sleeve', gender: 'girls', ageGroup: 'toddler', category: 'dresses', type: 'dress', color: 'Grey', hex: '#c4c8cf', motif: 'bolt', price: 699, photo: `${REAL}/mk-85.png` }),
+  P({ name: 'Multicolor Dress', gender: 'girls', ageGroup: 'toddler', category: 'dresses', type: 'dress', color: 'Multi', hex: '#f7a8c4', motif: 'rainbow', price: 449, photo: `${REAL}/mk-86.png` }),
+  P({ name: 'Yellow Dress', gender: 'girls', ageGroup: 'toddler', category: 'dresses', type: 'dress', color: 'Yellow', hex: '#ffd98a', motif: 'star', price: 449, photo: `${REAL}/mk-87.png` }),
+  P({ name: 'Pink Dress', gender: 'girls', ageGroup: 'toddler', category: 'dresses', type: 'dress', color: 'Pink', hex: '#f7a8c4', motif: 'heart', price: 449, photo: `${REAL}/mk-88.png` }),
+  P({ name: 'Green Dress', gender: 'girls', ageGroup: 'toddler', category: 'dresses', type: 'dress', color: 'Green', hex: '#b8d4a8', motif: 'bear', price: 449, photo: `${REAL}/mk-89.png` }),
+
+  // ---------------- MUST-HAVE PICKS — BOYS, UNDER 4 (1–3Y) ----------------
+  P({ name: 'Green T-Shirt', gender: 'boys', ageGroup: 'toddler', category: 'tops', type: 'tshirt', color: 'Green', hex: '#b8d4a8', motif: 'bear', price: 299, photo: `${REAL}/mk-90.png` }),
+  P({ name: 'Brown Shirt', gender: 'boys', ageGroup: 'toddler', category: 'tops', type: 'tshirt', color: 'Brown', hex: '#a2764e', motif: 'bear', price: 314, photo: `${REAL}/mk-91.png` }),
+  P({ name: 'Navy Top And Bottom', gender: 'boys', ageGroup: 'toddler', category: 'tops', type: 'tshirt', color: 'Navy', hex: '#5f7fb8', motif: 'cloud', price: 674, photo: `${REAL}/mk-92.png` }),
+  P({ name: 'White T-Shirt', gender: 'boys', ageGroup: 'toddler', category: 'tops', type: 'tshirt', color: 'White', hex: '#f2f0ea', motif: 'star', price: 299, photo: `${REAL}/mk-93.png` }),
+  P({ name: 'Blue Jogger', gender: 'boys', ageGroup: 'toddler', category: 'bottoms', type: 'pants', color: 'Blue', hex: '#9cc6ff', motif: 'cloud', price: 299, photo: `${REAL}/mk-94.png` }),
+  P({ name: 'Cotton Printed T-Shirt', gender: 'boys', ageGroup: 'toddler', category: 'tops', type: 'tshirt', color: 'Blue', hex: '#9cc6ff', motif: 'cloud', price: 299, photo: `${REAL}/mk-95.png` }),
+  P({ name: 'Orange Shorts', gender: 'boys', ageGroup: 'toddler', category: 'bottoms', type: 'shorts', color: 'Orange', hex: '#d97e5a', motif: 'bolt', price: 299, photo: `${REAL}/mk-96.png` }),
+  P({ name: 'Cotton Fish Design Sleeveless T-Shirt', gender: 'boys', ageGroup: 'toddler', category: 'tops', type: 'tshirt', color: 'White', hex: '#f2f0ea', motif: 'star', price: 299, photo: `${REAL}/mk-97.png` }),
+  P({ name: 'Blue Top And Bottom', gender: 'boys', ageGroup: 'toddler', category: 'tops', type: 'tshirt', color: 'Blue', hex: '#9cc6ff', motif: 'cloud', price: 399, photo: `${REAL}/mk-98.png` }),
+  P({ name: 'Blue And Grey Top And', gender: 'boys', ageGroup: 'toddler', category: 'tops', type: 'tshirt', color: 'Blue', hex: '#9cc6ff', motif: 'cloud', price: 399, photo: `${REAL}/mk-99.png` }),
+  P({ name: 'Multicolor Top And Bottom', gender: 'boys', ageGroup: 'toddler', category: 'tops', type: 'tshirt', color: 'Multi', hex: '#f7a8c4', motif: 'rainbow', price: 399, photo: `${REAL}/mk-100.png` }),
+  P({ name: 'Green Top And Bottom', gender: 'boys', ageGroup: 'toddler', category: 'tops', type: 'tshirt', color: 'Green', hex: '#b8d4a8', motif: 'bear', price: 399, photo: `${REAL}/mk-101.png` }),
+  P({ name: 'cotton typographic printed T-Shirt', gender: 'boys', ageGroup: 'toddler', category: 'tops', type: 'tshirt', color: 'White', hex: '#f2f0ea', motif: 'star', price: 399, photo: `${REAL}/mk-102.png` }),
+  P({ name: 'Cotton Animal printed T-Shirt', gender: 'boys', ageGroup: 'toddler', category: 'tops', type: 'tshirt', color: 'Cream', hex: '#f2e8d8', motif: 'bear', price: 399, photo: `${REAL}/mk-103.png` }),
+  P({ name: 'Cotton Typographic printed Long Sleeve', gender: 'boys', ageGroup: 'toddler', category: 'tops', type: 'tshirt', color: 'Multi', hex: '#f7a8c4', motif: 'rainbow', price: 399, photo: `${REAL}/mk-104.png` }),
+
+  // ---------------- MUST-HAVE PICKS — NEWBORN (0–12 M) ----------------
+  P({ name: 'Multi Bodysuit and Knit Bottom', gender: 'unisex', ageGroup: 'newborn', category: 'newborn', type: 'romper', color: 'Multi', hex: '#f7a8c4', motif: 'rainbow', price: 319, photo: `${REAL}/mk-105.png` }),
+  P({ name: 'Multi Shorts', gender: 'unisex', ageGroup: 'newborn', category: 'newborn', type: 'shorts', color: 'Multi', hex: '#f7a8c4', motif: 'rainbow', price: 319, photo: `${REAL}/mk-106.png` }),
+  P({ name: 'White Bodysuit and Knit Bottom', gender: 'unisex', ageGroup: 'newborn', category: 'newborn', type: 'romper', color: 'White', hex: '#f2f0ea', motif: 'star', price: 359, photo: `${REAL}/mk-107.png` }),
+  P({ name: 'knit bodysuit and skirt', gender: 'unisex', ageGroup: 'newborn', category: 'newborn', type: 'romper', color: 'Green', hex: '#b8d4a8', motif: 'bear', price: 359, photo: `${REAL}/mk-108.png` }),
+  P({ name: 'Multi Knit Bottom', gender: 'unisex', ageGroup: 'newborn', category: 'newborn', type: 'pants', color: 'Multi', hex: '#f7a8c4', motif: 'rainbow', price: 399, photo: `${REAL}/mk-109.png` }),
+  P({ name: 'Multi Knit Top', gender: 'unisex', ageGroup: 'newborn', category: 'newborn', type: 'tshirt', color: 'Multi', hex: '#f7a8c4', motif: 'rainbow', price: 399, photo: `${REAL}/mk-110.png` }),
+  P({ name: 'Multi Legging', gender: 'unisex', ageGroup: 'newborn', category: 'newborn', type: 'pants', color: 'Multi', hex: '#f7a8c4', motif: 'rainbow', price: 399, photo: `${REAL}/mk-111.png` }),
+  P({ name: 'Multicolor Front Open Vest', gender: 'unisex', ageGroup: 'newborn', category: 'newborn', type: 'romper', color: 'Multi', hex: '#f7a8c4', motif: 'rainbow', price: 299, photo: `${REAL}/mk-112.png` }),
+  P({ name: 'Multicolor Shorts', gender: 'unisex', ageGroup: 'newborn', category: 'newborn', type: 'shorts', color: 'Multi', hex: '#f7a8c4', motif: 'rainbow', price: 319, photo: `${REAL}/mk-113.png` }),
+  P({ name: 'Multicolor Body Suit', gender: 'unisex', ageGroup: 'newborn', category: 'newborn', type: 'romper', color: 'Multi', hex: '#f7a8c4', motif: 'rainbow', price: 399, photo: `${REAL}/mk-114.png` }),
+  P({ name: 'Multicolor Romper', gender: 'unisex', ageGroup: 'newborn', category: 'newborn', type: 'romper', color: 'Multi', hex: '#f7a8c4', motif: 'rainbow', price: 449, photo: `${REAL}/mk-115.png` }),
+  P({ name: 'Multicolor Knit Bottom', gender: 'unisex', ageGroup: 'newborn', category: 'newborn', type: 'pants', color: 'Multi', hex: '#f7a8c4', motif: 'rainbow', price: 399, photo: `${REAL}/mk-116.png` }),
+  P({ name: 'Multicolor Legging', gender: 'unisex', ageGroup: 'newborn', category: 'newborn', type: 'pants', color: 'Multi', hex: '#f7a8c4', motif: 'rainbow', price: 399, photo: `${REAL}/mk-117.png` }),
+  P({ name: 'Multicolor Knit Top', gender: 'unisex', ageGroup: 'newborn', category: 'newborn', type: 'tshirt', color: 'Multi', hex: '#f7a8c4', motif: 'rainbow', price: 399, photo: `${REAL}/mk-118.png` }),
+  P({ name: 'Aqua Blue Orange and White', gender: 'unisex', ageGroup: 'newborn', category: 'newborn', type: 'pants', color: 'White', hex: '#f2f0ea', motif: 'star', price: 399, photo: `${REAL}/mk-119.png` })
 ];
 
 const categories = [

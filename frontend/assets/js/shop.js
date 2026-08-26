@@ -52,20 +52,10 @@
     document.getElementById('filters').classList.toggle('hidden');
   });
 
-  const filterPromo = document.getElementById('filter-promo');
-  const shopLayout = document.getElementById('shop-layout');
-
   async function load() {
     title.textContent = heading();
     grid.innerHTML = '<div class="skel aspect-[3/4]"></div>'.repeat(8);
     empty.classList.add('hidden');
-    const showBoysPromo = state.gender === 'boys';
-    if (filterPromo) filterPromo.classList.toggle('hidden', !showBoysPromo);
-    // add a 3rd column (opposite side from the filters) only while the promo is showing
-    if (shopLayout) {
-      shopLayout.classList.toggle('md:grid-cols-[220px_1fr]', !showBoysPromo);
-      shopLayout.classList.toggle('md:grid-cols-[220px_1fr_220px]', showBoysPromo);
-    }
 
     const q = new URLSearchParams();
     if (state.gender) q.set('gender', state.gender);

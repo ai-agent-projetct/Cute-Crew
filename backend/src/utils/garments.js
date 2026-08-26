@@ -2,6 +2,12 @@
 // Every product image on the site is generated here from { type, hex, accent, motif }.
 // viewBox is 600x750; garments are drawn symmetric around x=300.
 
+// Perceived lightness 0..1, used to keep pale garments legible on the grey backdrop.
+function lum(hex) {
+  const n = parseInt(hex.replace('#', ''), 16);
+  return (0.2126 * (n >> 16) + 0.7152 * ((n >> 8) & 0xff) + 0.0722 * (n & 0xff)) / 255;
+}
+
 function shade(hex, amt) {
   const n = hex.replace('#', '');
   const num = parseInt(n, 16);
@@ -158,13 +164,15 @@ const GARMENTS = {
  */
 function renderGarment(opts) {
   const { type = 'tshirt', hex = '#f7a8c4', accent = '#ffffff', motif = 'star', bg = 'card' } = opts;
-  const o = shade(hex, -70);
+  // Cream/ivory/white fills are nearly the same value as the grey backdrop, so the
+  // outline has to carry the silhouette. Mid and dark garments keep the plain -70.
+  const o = shade(hex, -(70 + Math.round(Math.max(0, lum(hex) - 0.72) * 380)));
   const draw = GARMENTS[type] || GARMENTS.tshirt;
   const body = draw({ hex, accent, motif, o });
 
   let bgLayer = '';
   if (bg === 'card') {
-    bgLayer = `<rect width="600" height="750" fill="#ffffff"/>`;
+    bgLayer = `<rect width="600" height="750" fill="#e4e5e7"/>`;
   } else if (bg && bg !== 'none') {
     bgLayer = `<rect width="600" height="750" fill="${bg}"/>`;
   }

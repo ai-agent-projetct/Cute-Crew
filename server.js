@@ -1,3 +1,4 @@
+require('dotenv').config();          // load DB credentials from .env
 const app = require('./backend/src/app');
 const config = require('./backend/src/config');
 

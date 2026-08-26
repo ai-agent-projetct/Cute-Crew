@@ -3,15 +3,8 @@ const cors = require('cors');
 const config = require('./config');
 const apiRoutes = require('./routes/api');
 const imageRoutes = require('./routes/images');
-const db = require('./utils/mysql-db');
 
 const app = express();
-
-// Initialize MySQL database on startup
-db.initDb().catch(err => {
-  console.error('Failed to initialize database:', err.message);
-  process.exit(1);
-});
 
 app.disable('x-powered-by');
 app.use(cors());

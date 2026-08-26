@@ -248,7 +248,7 @@ body { background: #ffffff; color: var(--text); }
 .p-card { background: #fff; border: 1px solid var(--line); box-shadow: 0 4px 18px -12px rgba(0,0,0,0.18); }
 .p-card:hover { border-color: var(--red); box-shadow: 0 18px 40px -16px rgba(232,53,43,0.30); }
 /* product image sits on white by default; on hover a soft grey scrim fades in over it (Miniklub-style) */
-.product-thumb { position: relative; background-color: #ffffff; }
+.product-thumb { position: relative; background-color: #e4e5e7; }
 .product-thumb::after { content: ''; position: absolute; inset: 0; background: #f0f0f0; opacity: 0; transition: opacity 0.25s; pointer-events: none; }
 .p-card:hover .product-thumb::after { opacity: 0.55; }
 .tile-card { border: 1px solid var(--line); box-shadow: 0 4px 18px -12px rgba(0,0,0,0.18); }

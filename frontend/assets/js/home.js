@@ -7,9 +7,14 @@
     const { slides } = await API.get('/hero');
     const uploaded = slides.filter((s) => s.uploaded);
     const banners = uploaded.length ? uploaded : slides.slice(0, 4);
-    document.getElementById('banner-track').innerHTML = banners.map((s) => `
+    // Every slide is one fixed 12:5 box so the carousel never changes height.
+    // Uploaded banners are padded to that ratio by tools/normalize-banners.py;
+    // `contain` means an un-normalised upload letterboxes instead of losing copy,
+    // since these are designed artwork with headline text baked in.
+    document.getElementById('banner-track').innerHTML = banners.map((s, i) => `
       <div class="swiper-slide">
-        <img src="${s.src}" alt="${s.title || 'Cute Crew'}" loading="lazy" class="w-full aspect-[16/6] object-cover">
+        <img src="${s.src}" alt="${s.title || 'Cute Crew'}" loading="${i ? 'lazy' : 'eager'}"
+             class="w-full aspect-[12/5] object-contain block bg-white">
       </div>`).join('');
     new Swiper('#banner-swiper', {
       loop: banners.length > 1,

@@ -1,5 +1,7 @@
-const store = require('../utils/store-mysql');
-const { removeFile } = require('../utils/uploads');
+const fs = require('fs');
+const path = require('path');
+const store = require('../utils/store');
+const config = require('../config');
 
 // Default hero slides — real editorial photography generated for the brand.
 // (Falls back gracefully: any missing file simply doesn't render as a 3D card.)
@@ -15,30 +17,33 @@ const DEFAULT_SLIDES = [
   { src: '/assets/img/real/school-walk.png', title: 'School' }
 ];
 
-// `file` is already a ready-to-use URL from storeFile(): either `/uploads/xxx`
-// (dev, local disk) or a full https:// Vercel Blob URL (production).
-function srcFor(file) {
-  return /^https?:\/\//i.test(file) || file.startsWith('/') ? file : `/uploads/${file}`;
+function uploaded() {
+  return store.read('hero', []);
 }
 
-async function uploaded() {
-  return store.getHeroSlides();
-}
+// `file` is a bare filename from the older uploader but an already-rooted
+// `/uploads/xxx` URL from the current one — normalise both to a single src so
+// neither shape double-prefixes into `/uploads//uploads/xxx`.
+const srcOf = (file) => (file.startsWith('/') ? file : `/uploads/${file}`);
 
 // Uploaded images come first (admin content leads the 3D hero), defaults fill the rest.
-async function slides() {
-  const ups = (await uploaded()).map((u) => ({ src: srcFor(u.file), title: u.title || 'Cute Crew', uploaded: true, file: u.file }));
+function slides() {
+  const ups = uploaded().map((u) => ({ src: srcOf(u.file), title: u.title || 'Cute Crew', uploaded: true, file: u.file }));
   return ups.concat(DEFAULT_SLIDES).slice(0, 12);
 }
 
-async function add(file, title) {
-  await store.addHeroSlide(file, title);
+function add(file, title) {
+  const list = uploaded().slice();
+  list.unshift({ file, title: title || '', at: new Date().toISOString() });
+  store.write('hero', list);
   return slides();
 }
 
-async function remove(file) {
-  await store.removeHeroSlide(file);
-  await removeFile(file);
+function remove(file) {
+  const list = uploaded().filter((u) => u.file !== file);
+  store.write('hero', list);
+  const abs = path.join(config.uploadsDir, path.basename(file));
+  if (fs.existsSync(abs) && path.dirname(abs) === config.uploadsDir) fs.unlinkSync(abs);
   return slides();
 }
 

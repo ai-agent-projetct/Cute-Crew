@@ -30,3 +30,13 @@ daily-production-summary.xlsx
 # local IDE/session files
 .claude/launch.json
 .claude/scheduled_tasks.lock
+
+# image pipeline working files (originals + alpha mattes for the grey-backdrop pass)
+frontend/assets/img/real/_orig/
+frontend/assets/img/real/matted/
+
+# banner originals kept before ratio normalisation
+backend/uploads/_orig/
+
+# runtime log
+tools/server.log
