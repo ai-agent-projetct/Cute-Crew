@@ -20,6 +20,25 @@ function hoverPhoto(id) {
   return hoverIds.has(id) ? `/assets/img/real/mk-${id}-b.png` : null;
 }
 
+// The image pipeline rewrites product photos in place, so the filename alone is a
+// stale cache key — a browser that cached the old artwork keeps serving it until
+// its max-age lapses, no matter what headers we send afterwards. Stamping URLs
+// with the newest mtime in the photo directory makes a rebuilt image a new URL,
+// so refreshed artwork always wins. Computed once; a restart picks up rebuilds.
+let assetVer = null;
+function ver() {
+  if (assetVer === null) {
+    try {
+      assetVer = Math.round(fs.readdirSync(PHOTO_DIR).reduce((m, f) => {
+        try { return Math.max(m, fs.statSync(path.join(PHOTO_DIR, f)).mtimeMs); } catch (e) { return m; }
+      }, 0));
+    } catch (e) { assetVer = 0; }
+  }
+  return assetVer;
+}
+const stamp = (url) =>
+  (url && url.startsWith('/assets/img/real/') && !url.includes('?') ? `${url}?v=${ver()}` : url);
+
 // Size sets per age group (mirrors catalog.js)
 const SIZE_SETS = {
   newborn: ['0-3M', '3-6M', '6-9M', '9-12M'],
@@ -73,10 +92,10 @@ function save(list) {
 function withImage(p) {
   const stock = totalStock(p);
   return Object.assign({}, p, {
-    image: p.photo || `/img/p/${p.id}.svg`,
+    image: stamp(p.photo) || `/img/p/${p.id}.svg`,
     // an admin-uploaded flip image always wins over the mk-<id>-b.png fallback
-    imageHover: p.photoHover || hoverPhoto(p.id),
-    imageCut: p.photoCut || p.photo || `/img/p/${p.id}.svg?bg=none`,
+    imageHover: stamp(p.photoHover || hoverPhoto(p.id)),
+    imageCut: stamp(p.photoCut || p.photo) || `/img/p/${p.id}.svg?bg=none`,
     art: `/img/p/${p.id}.svg`,
     discount: p.mrp > p.price ? Math.round(((p.mrp - p.price) / p.mrp) * 100) : 0,
     stock,

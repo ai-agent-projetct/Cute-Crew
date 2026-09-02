@@ -263,7 +263,8 @@
     }
     pForm.elements.photo.value = product.photo || '';
     // fall back to the auto-discovered flip image so editing a product doesn't drop it
-    pForm.elements.photoHover.value = product.photoHover || product.imageHover || '';
+    // strip the cache-busting stamp so it isn't saved into the stored path
+    pForm.elements.photoHover.value = (product.photoHover || product.imageHover || '').split('?')[0];
     renderStockInputs(product.ageGroup, product.stockBySize);
     updatePreview();
     pForm.scrollIntoView({ behavior: 'smooth' });
