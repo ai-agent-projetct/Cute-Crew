@@ -22,13 +22,14 @@
   pdp.innerHTML = `
     <div>
       <div class="p-card !rounded-2xl overflow-hidden">
-        <div class="aspect-[4/5] bg-surface" id="pdp-zoom">
+        <div class="aspect-[4/5] bg-white" id="pdp-zoom">
           <img id="pdp-img" src="${p.image}" alt="${p.name}" class="w-full h-full object-cover transition-transform duration-500">
         </div>
       </div>
       <div class="flex gap-3 mt-4">
-        <button class="mm-thumb w-20 on" data-img="${p.image}"><img src="${p.image}" alt="" class="w-full aspect-[4/5] object-cover"></button>
-        <button class="mm-thumb w-20" data-img="${p.imageCut}"><img src="${p.imageCut}" alt="" class="w-full aspect-[4/5] object-cover bg-surface"></button>
+        <button class="mm-thumb w-20 on" data-img="${p.image}"><img src="${p.image}" alt="" class="w-full aspect-[4/5] object-cover bg-white"></button>
+        ${p.imageHover ? `<button class="mm-thumb w-20" data-img="${p.imageHover}"><img src="${p.imageHover}" alt="" class="w-full aspect-[4/5] object-cover bg-white"></button>` : ''}
+        ${p.imageCut && p.imageCut !== p.image ? `<button class="mm-thumb w-20" data-img="${p.imageCut}"><img src="${p.imageCut}" alt="" class="w-full aspect-[4/5] object-cover bg-white"></button>` : ''}
       </div>
     </div>
 

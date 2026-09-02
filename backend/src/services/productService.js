@@ -1,5 +1,24 @@
+const fs = require('fs');
+const path = require('path');
 const store = require('../utils/store');
 const catalog = require('../data/catalog');
+const config = require('../config');
+
+// Second-angle shots live beside the main one as mk-<id>-b.png. Discovered from
+// disk rather than declared per product, so adding a hover frame is a file drop.
+// Cached after the first read; a restart picks up newly added files.
+const PHOTO_DIR = path.join(config.frontendDir, 'assets', 'img', 'real');
+let hoverIds = null;
+function hoverPhoto(id) {
+  if (!hoverIds) {
+    try {
+      hoverIds = new Set(fs.readdirSync(PHOTO_DIR)
+        .filter((f) => /^mk-\d+-b\.png$/.test(f))
+        .map((f) => Number(f.match(/\d+/)[0])));
+    } catch (e) { hoverIds = new Set(); }
+  }
+  return hoverIds.has(id) ? `/assets/img/real/mk-${id}-b.png` : null;
+}
 
 // Size sets per age group (mirrors catalog.js)
 const SIZE_SETS = {
@@ -55,6 +74,8 @@ function withImage(p) {
   const stock = totalStock(p);
   return Object.assign({}, p, {
     image: p.photo || `/img/p/${p.id}.svg`,
+    // an admin-uploaded flip image always wins over the mk-<id>-b.png fallback
+    imageHover: p.photoHover || hoverPhoto(p.id),
     imageCut: p.photoCut || p.photo || `/img/p/${p.id}.svg?bg=none`,
     art: `/img/p/${p.id}.svg`,
     discount: p.mrp > p.price ? Math.round(((p.mrp - p.price) / p.mrp) * 100) : 0,

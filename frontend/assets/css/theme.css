@@ -107,8 +107,9 @@ body {
 
 /* ---------- mix & match : Garanimals-style rotating wheels ---------- */
 .mm-board {
-  background: linear-gradient(160deg, #fbf8f1 0%, #f4eee1 100%);
-  border-radius: 1.5rem; border: 1px solid rgba(230, 197, 134, 0.35);
+  /* white to match the product backdrops; the wheel images multiply-blend onto it */
+  background: #ffffff;
+  border-radius: 1.5rem; border: 1px solid var(--line);
   overflow: hidden; position: relative;
 }
 .mm-wheel { position: relative; }
@@ -248,7 +249,21 @@ body { background: #ffffff; color: var(--text); }
 .p-card { background: #fff; border: 1px solid var(--line); box-shadow: 0 4px 18px -12px rgba(0,0,0,0.18); }
 .p-card:hover { border-color: var(--red); box-shadow: 0 18px 40px -16px rgba(232,53,43,0.30); }
 /* product image sits on white by default; on hover a soft grey scrim fades in over it (Miniklub-style) */
-.product-thumb { position: relative; background-color: #e4e5e7; }
+.product-thumb { position: relative; background-color: #ffffff; }
+
+/* Second-angle shot crossfades in on hover. Pointer devices only — on touch
+   there is no hover, and the frame would either never show or stick after a tap. */
+.thumb-hover {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; opacity: 0; pointer-events: none;
+  z-index: 1;                      /* above the ::after hover wash, below the wish button */
+}
+@media (hover: hover) and (pointer: fine) {
+  .thumb-hover { transition: opacity 0.4s ease; }
+  /* .p-card covers the product grids; .group covers the homepage spotlight tiles */
+  .p-card:hover .thumb-hover,
+  .group:hover .thumb-hover { opacity: 1; }
+}
 .product-thumb::after { content: ''; position: absolute; inset: 0; background: #f0f0f0; opacity: 0; transition: opacity 0.25s; pointer-events: none; }
 .p-card:hover .product-thumb::after { opacity: 0.55; }
 .tile-card { border: 1px solid var(--line); box-shadow: 0 4px 18px -12px rgba(0,0,0,0.18); }

@@ -127,17 +127,41 @@
             <div id="stock-inputs" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2"></div>
           </div>
           <input type="hidden" name="photo">
-          <div class="flex flex-wrap items-center gap-4 mt-4">
-            <img id="product-preview" src="/img/g/tshirt.svg?hex=%23f7a8c4&accent=%23ffffff&motif=star" alt="Preview" class="w-24 rounded-xl border border-line aspect-[4/5] object-cover">
-            <div class="min-w-0">
-              <label class="btn-ghost px-4 py-2 text-xs cursor-pointer inline-block">
-                📷 Upload product photo
-                <input id="product-photo-file" type="file" accept="image/*" class="hidden">
-              </label>
-              <button type="button" id="product-photo-remove" class="text-red-400 text-xs hover:underline ml-3 hidden">Remove photo</button>
-              <p class="text-soft text-xs mt-1.5" id="product-photo-hint">No photo uploaded — the illustrated art (type + colours) is used.</p>
+          <input type="hidden" name="photoHover">
+          <div class="mt-5">
+            <p class="text-xs font-bold uppercase tracking-widest text-soft mb-1">Product images</p>
+            <p class="text-soft text-xs mb-3">The <b>main</b> image is what shoppers see on the card. The <b>hover</b> image is what it flips to when they point at it — usually the same outfit worn by a model.</p>
+            <div class="grid sm:grid-cols-2 gap-5">
+
+              <div class="flex items-center gap-3">
+                <img id="product-preview" src="/img/g/tshirt.svg?hex=%23f7a8c4&accent=%23ffffff&motif=star" alt="Main image preview" class="w-24 shrink-0 rounded-xl border border-line aspect-[4/5] object-cover bg-white">
+                <div class="min-w-0">
+                  <p class="text-xs font-bold mb-1.5">Main image</p>
+                  <label class="btn-ghost px-3 py-1.5 text-xs cursor-pointer inline-block">
+                    📷 Upload
+                    <input id="product-photo-file" type="file" accept="image/*" class="hidden">
+                  </label>
+                  <button type="button" id="product-photo-remove" class="text-red-400 text-xs hover:underline ml-2 hidden">Remove</button>
+                  <p class="text-soft text-xs mt-1.5" id="product-photo-hint">No photo uploaded — the illustrated art is used.</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <img id="product-preview-hover" src="" alt="Hover image preview" class="w-24 shrink-0 rounded-xl border border-line aspect-[4/5] object-cover bg-white hidden">
+                <div id="product-hover-placeholder" class="w-24 shrink-0 rounded-xl border border-dashed border-line aspect-[4/5] flex items-center justify-center text-soft text-2xl">+</div>
+                <div class="min-w-0">
+                  <p class="text-xs font-bold mb-1.5">Hover image <span class="text-soft font-normal">(flip)</span></p>
+                  <label class="btn-ghost px-3 py-1.5 text-xs cursor-pointer inline-block">
+                    🔁 Upload
+                    <input id="product-photo-hover-file" type="file" accept="image/*" class="hidden">
+                  </label>
+                  <button type="button" id="product-photo-hover-remove" class="text-red-400 text-xs hover:underline ml-2 hidden">Remove</button>
+                  <p class="text-soft text-xs mt-1.5" id="product-photo-hover-hint">No hover image — this card won't flip.</p>
+                </div>
+              </div>
+
             </div>
-            <div class="ml-auto flex gap-2">
+            <div class="flex gap-2 justify-end mt-5">
               <button type="button" id="product-cancel" class="btn-ghost px-5 py-2.5 text-sm">Cancel</button>
               <button class="btn-gold px-6 py-2.5 text-sm">Save Product</button>
             </div>

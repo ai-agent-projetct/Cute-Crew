@@ -77,6 +77,7 @@ function cardHTML(p) {
     <a href="/product.html?id=${p.id}" class="block">
       <div class="aspect-[4/5] overflow-hidden product-thumb">
         <img src="${p.image}" alt="${p.name}" loading="lazy" class="w-full h-full object-cover">
+        ${p.imageHover ? `<img src="${p.imageHover}" alt="" aria-hidden="true" loading="lazy" class="thumb-hover">` : ''}
       </div>
       <div class="p-3.5">
         <div class="flex items-center justify-between gap-2">

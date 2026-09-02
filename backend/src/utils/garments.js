@@ -172,7 +172,7 @@ function renderGarment(opts) {
 
   let bgLayer = '';
   if (bg === 'card') {
-    bgLayer = `<rect width="600" height="750" fill="#e4e5e7"/>`;
+    bgLayer = `<rect width="600" height="750" fill="#ffffff"/>`;
   } else if (bg && bg !== 'none') {
     bgLayer = `<rect width="600" height="750" fill="${bg}"/>`;
   }
