@@ -31,10 +31,11 @@
     const { items } = await API.get('/products?spotlight=1&limit=8');
     document.getElementById('spotlight-track').innerHTML = items.map((p) => `
       <div class="swiper-slide">
-        <a href="/product.html?id=${p.id}" class="block relative group overflow-hidden">
+        <a href="/product.html?id=${p.id}" class="block relative group overflow-hidden product-thumb">
           <img src="${p.image}" alt="${p.name}" loading="lazy"
                class="w-full aspect-[4/3] sm:aspect-[4/5] object-cover transition-transform duration-500 group-hover:scale-[1.04]">
-          <div class="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/80 via-black/30 to-transparent">
+          ${p.imageHover ? `<img src="${p.imageHover}" alt="" aria-hidden="true" loading="lazy" class="thumb-hover">` : ''}
+          <div class="absolute inset-x-0 bottom-0 p-5 z-[2] bg-gradient-to-t from-black/80 via-black/30 to-transparent">
             <p class="font-display font-extrabold text-lg leading-tight">${p.name}</p>
             <p class="text-sm mt-1"><span class="font-bold">${fmt(p.price)}</span>
               <span class="text-soft line-through text-xs ml-1.5">${fmt(p.mrp)}</span>

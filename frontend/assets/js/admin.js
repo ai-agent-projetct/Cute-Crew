@@ -173,6 +173,7 @@
     editingId = null;
     pForm.reset();
     pForm.elements.photo.value = '';
+    pForm.elements.photoHover.value = '';
     document.getElementById('product-form-title').textContent = 'New Product';
     renderStockInputs(pForm.elements.ageGroup.value, null);
     pForm.classList.remove('hidden');
@@ -189,37 +190,55 @@
       : 'No photo uploaded — the illustrated art (type + colours) is used.';
     document.getElementById('product-preview').src = photo ||
       `/img/g/${fd.get('type')}.svg?hex=${encodeURIComponent(fd.get('hex'))}&accent=${encodeURIComponent(fd.get('accent'))}&motif=${fd.get('motif')}`;
+
+    // hover (flip) image — optional, so the slot shows a placeholder until one exists
+    const hover = pForm.elements.photoHover.value;
+    const hoverImg = document.getElementById('product-preview-hover');
+    hoverImg.classList.toggle('hidden', !hover);
+    document.getElementById('product-hover-placeholder').classList.toggle('hidden', !!hover);
+    document.getElementById('product-photo-hover-remove').classList.toggle('hidden', !hover);
+    document.getElementById('product-photo-hover-hint').textContent = hover
+      ? 'Hover image set ✓ — the card flips to it on hover.'
+      : "No hover image — this card won't flip.";
+    if (hover) hoverImg.src = hover;
   }
   pForm.addEventListener('input', updatePreview);
 
-  // product photo upload
-  document.getElementById('product-photo-file').addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const hint = document.getElementById('product-photo-hint');
-    hint.textContent = 'Uploading photo…';
-    try {
-      const fd = new FormData();
-      fd.append('image', file);
-      const { url } = await API.post('/admin/upload', fd);
-      pForm.elements.photo.value = url;
+  // Both image slots upload the same way — only the field they fill differs.
+  function wireUpload(fileId, removeId, field, hintId, busyLabel) {
+    document.getElementById(fileId).addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const hint = document.getElementById(hintId);
+      hint.textContent = busyLabel;
+      try {
+        const fd = new FormData();
+        fd.append('image', file);
+        const { url } = await API.post('/admin/upload', fd);
+        pForm.elements[field].value = url;
+        updatePreview();
+        toast('Image uploaded ✓');
+      } catch (ex) {
+        hint.textContent = ex.message;
+      }
+      e.target.value = '';
+    });
+    document.getElementById(removeId).addEventListener('click', () => {
+      pForm.elements[field].value = '';
       updatePreview();
-      toast('Photo uploaded ✓');
-    } catch (ex) {
-      hint.textContent = ex.message;
-    }
-    e.target.value = '';
-  });
-  document.getElementById('product-photo-remove').addEventListener('click', () => {
-    pForm.elements.photo.value = '';
-    updatePreview();
-  });
+    });
+  }
+  wireUpload('product-photo-file', 'product-photo-remove', 'photo',
+    'product-photo-hint', 'Uploading photo…');
+  wireUpload('product-photo-hover-file', 'product-photo-hover-remove', 'photoHover',
+    'product-photo-hover-hint', 'Uploading hover image…');
 
   pForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const fd = new FormData(pForm);
     const body = Object.fromEntries(fd.entries());
     body.photo = body.photo || null;
+    body.photoHover = body.photoHover || null;
     body.stockBySize = readStockInputs();
     delete body.stock;
     try {
@@ -243,6 +262,9 @@
       if (input && v !== null && typeof v !== 'object') input.value = v;
     }
     pForm.elements.photo.value = product.photo || '';
+    // fall back to the auto-discovered flip image so editing a product doesn't drop it
+    // strip the cache-busting stamp so it isn't saved into the stored path
+    pForm.elements.photoHover.value = (product.photoHover || product.imageHover || '').split('?')[0];
     renderStockInputs(product.ageGroup, product.stockBySize);
     updatePreview();
     pForm.scrollIntoView({ behavior: 'smooth' });
@@ -259,10 +281,10 @@
         `<span class="${n === 0 ? 'text-red-400' : n <= 2 ? 'text-peach' : 'text-soft'}">${s}:${n}</span>`).join('  ');
       return `
       <div class="p-card !rounded-xl p-3 flex items-center gap-3 flex-wrap">
-        <img src="${p.image}" alt="" class="w-12 rounded-lg aspect-[4/5] object-cover">
+        <img src="${p.image}" alt="" class="w-12 rounded-lg aspect-[4/5] object-cover bg-white">
         <div class="min-w-0 flex-1">
           <p class="font-bold truncate">${p.name}${tag}</p>
-          <p class="text-xs text-soft">#${p.id} · ${p.gender} · ${p.category}</p>
+          <p class="text-xs text-soft">#${p.id} · ${p.gender} · ${p.category}${p.imageHover ? ' · <span class="text-mint font-bold">FLIP ✓</span>' : ' · <span class="text-soft">no flip</span>'}</p>
           <p class="text-[0.68rem] mt-0.5">Stock &nbsp;${sizeChips} &nbsp;·&nbsp; <b class="${out ? 'text-red-400' : ''}">${p.stock} total</b></p>
         </div>
         <span class="font-bold shrink-0">${fmt(p.price)}</span>

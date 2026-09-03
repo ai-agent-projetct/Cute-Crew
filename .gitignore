@@ -40,3 +40,6 @@ backend/uploads/_orig/
 
 # runtime log
 tools/server.log
+
+# alpha cut-outs for the miniklub shots (regenerable; keeps backdrop swaps cheap)
+frontend/assets/img/real/matted-mk/

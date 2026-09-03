@@ -1,4 +1,42 @@
+const fs = require('fs');
+const path = require('path');
 const db = require('../utils/mysql-db');
+const config = require('../config');
+
+// Second-angle shots live beside the main one as mk-<id>-b.png. Discovered from
+// disk rather than declared per product, so adding a hover frame is a file drop.
+// Cached after the first read; a restart picks up newly added files.
+const PHOTO_DIR = path.join(config.frontendDir, 'assets', 'img', 'real');
+let hoverIds = null;
+function hoverPhoto(id) {
+  if (!hoverIds) {
+    try {
+      hoverIds = new Set(fs.readdirSync(PHOTO_DIR)
+        .filter((f) => /^mk-\d+-b\.png$/.test(f))
+        .map((f) => Number(f.match(/\d+/)[0])));
+    } catch (e) { hoverIds = new Set(); }
+  }
+  return hoverIds.has(id) ? `/assets/img/real/mk-${id}-b.png` : null;
+}
+
+// The image pipeline rewrites product photos in place, so the filename alone is a
+// stale cache key — a browser that cached the old artwork keeps serving it until
+// its max-age lapses, no matter what headers we send afterwards. Stamping URLs
+// with the newest mtime in the photo directory makes a rebuilt image a new URL,
+// so refreshed artwork always wins. Computed once; a restart picks up rebuilds.
+let assetVer = null;
+function ver() {
+  if (assetVer === null) {
+    try {
+      assetVer = Math.round(fs.readdirSync(PHOTO_DIR).reduce((m, f) => {
+        try { return Math.max(m, fs.statSync(path.join(PHOTO_DIR, f)).mtimeMs); } catch (e) { return m; }
+      }, 0));
+    } catch (e) { assetVer = 0; }
+  }
+  return assetVer;
+}
+const stamp = (url) =>
+  (url && url.startsWith('/assets/img/real/') && !url.includes('?') ? `${url}?v=${ver()}` : url);
 
 // Size sets per age group (mirrors catalog.js)
 const SIZE_SETS = {
@@ -49,8 +87,10 @@ async function all() {
 function withImage(p) {
   const stock = totalStock(p);
   return Object.assign({}, p, {
-    image: p.photo || `/img/p/${p.id}.svg`,
-    imageCut: p.photoCut || p.photo || `/img/p/${p.id}.svg?bg=none`,
+    image: stamp(p.photo) || `/img/p/${p.id}.svg`,
+    // an admin-uploaded flip image always wins over the mk-<id>-b.png fallback
+    imageHover: stamp(p.photoHover || hoverPhoto(p.id)),
+    imageCut: stamp(p.photoCut || p.photo) || `/img/p/${p.id}.svg?bg=none`,
     art: `/img/p/${p.id}.svg`,
     discount: p.mrp > p.price ? Math.round(((p.mrp - p.price) / p.mrp) * 100) : 0,
     stock,
@@ -158,13 +198,13 @@ async function create(data) {
   const result = await db.query(
     `INSERT INTO products (name, gender, ageGroup, category, type, color, hex, accent, motif,
      price, mrp, rating, ratings, badge, palette, matches, material, description, photo, photoCut,
-     spotlight, sizes, stockBySize)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+     photoHover, spotlight, sizes, stockBySize)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       p.name, p.gender, p.ageGroup, p.category, p.type, p.color, p.hex, p.accent, p.motif,
       p.price, p.mrp, p.rating, p.ratings, p.badge, p.palette, JSON.stringify(p.matches),
       p.material, p.description, p.photo || null, p.photoCut || null,
-      !!p.spotlight, JSON.stringify(p.sizes), JSON.stringify(p.stockBySize)
+      p.photoHover || null, !!p.spotlight, JSON.stringify(p.sizes), JSON.stringify(p.stockBySize)
     ]
   );
   return byId(result.insertId);
@@ -186,14 +226,14 @@ async function update(id, data) {
   await db.query(
     `UPDATE products SET name=?, gender=?, ageGroup=?, category=?, type=?, color=?, hex=?, accent=?,
      motif=?, price=?, mrp=?, rating=?, ratings=?, badge=?, palette=?, matches=?, material=?,
-     description=?, photo=?, photoCut=?, spotlight=?, sizes=?, stockBySize=? WHERE id=?`,
+     description=?, photo=?, photoCut=?, photoHover=?, spotlight=?, sizes=?, stockBySize=? WHERE id=?`,
     [
       merged.name, merged.gender, merged.ageGroup, merged.category, merged.type, merged.color,
       merged.hex, merged.accent, merged.motif, merged.price, merged.mrp, merged.rating,
       merged.ratings, merged.badge, merged.palette, JSON.stringify(merged.matches || []),
       merged.material, merged.description, merged.photo || null, merged.photoCut || null,
-      !!merged.spotlight, JSON.stringify(merged.sizes || []), JSON.stringify(merged.stockBySize || {}),
-      Number(id)
+      merged.photoHover || null, !!merged.spotlight, JSON.stringify(merged.sizes || []),
+      JSON.stringify(merged.stockBySize || {}), Number(id)
     ]
   );
   return byId(id);

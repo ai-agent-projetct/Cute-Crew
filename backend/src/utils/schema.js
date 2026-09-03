@@ -50,6 +50,7 @@ async function createTables() {
       description TEXT,
       photo VARCHAR(500),
       photoCut VARCHAR(500),
+      photoHover VARCHAR(500),
       spotlight BOOLEAN DEFAULT FALSE,
       sizes JSON,
       stockBySize JSON,
@@ -57,6 +58,15 @@ async function createTables() {
       updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     )
   `);
+  // Backfill for a products table that already existed before photoHover was
+  // added — MySQL/TiDB don't support ADD COLUMN IF NOT EXISTS, so check first.
+  const photoHoverCol = await db.queryOne(
+    `SELECT COLUMN_NAME FROM information_schema.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'products' AND COLUMN_NAME = 'photoHover'`
+  );
+  if (!photoHoverCol) {
+    await db.query('ALTER TABLE products ADD COLUMN photoHover VARCHAR(500) AFTER photoCut');
+  }
 
   await db.query(`
     CREATE TABLE IF NOT EXISTS mixmatch (

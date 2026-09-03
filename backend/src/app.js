@@ -19,13 +19,17 @@ app.use('/uploads', express.static(config.uploadsDir, { maxAge: '1d' }));
 
 // Frontend (static).
 // HTML/JS/CSS are served with no-cache so browsers always revalidate and pick up
-// changes immediately (ETags make revalidation cheap). Images/videos keep a long
-// cache because their URLs are versioned (?v=N) when they change.
+// changes immediately (ETags make revalidation cheap).
+// Product photography under img/real/ gets the same treatment: the image pipeline
+// rewrites those files IN PLACE (backdrop swaps, re-mattes) while the filename
+// stays put, so a long max-age would serve stale artwork for a day. Revalidation
+// still 304s when nothing changed, so this costs a header round-trip, not bytes.
+// Everything else (logo, favicon, video) is versioned with ?v=N and can cache hard.
 app.use(express.static(config.frontendDir, {
   extensions: ['html'],
   etag: true,
   setHeaders(res, filePath) {
-    if (/\.(html|js|css|json)$/i.test(filePath)) {
+    if (/\.(html|js|css|json)$/i.test(filePath) || /[\\/]img[\\/]real[\\/]/i.test(filePath)) {
       res.setHeader('Cache-Control', 'no-cache, must-revalidate');
     } else {
       res.setHeader('Cache-Control', 'public, max-age=86400');
