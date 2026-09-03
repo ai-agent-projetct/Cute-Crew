@@ -139,8 +139,8 @@ function headerHTML() {
     <div class="max-w-7xl mx-auto px-4">
       <div class="flex items-center gap-6 h-20">
         <a href="/" class="flex items-center shrink-0" aria-label="Cute Crew home">
-          <img src="/assets/img/logo.webp?v=8" alt="Cute Crew" class="logo-img h-16 w-auto"
-               onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='/assets/img/logo.png?v=8';}else{this.style.display='none';}">
+          <img src="/assets/img/logo.webp?v=9" alt="Cute Crew" class="logo-img h-16 w-auto"
+               onerror="var n=+(this.dataset.fb||0)+1;this.dataset.fb=n;if(n===1)this.src='/assets/img/logo.gif?v=9';else if(n===2)this.src='/assets/img/logo.png?v=9';else this.style.display='none';">
         </a>
         <!-- menu sticks with search/icons on the right (desktop only — mobile keeps its own scrollable row below) -->
         <nav class="hidden md:flex items-center gap-6 text-sm shrink-0 ml-auto" aria-label="Categories">
@@ -196,8 +196,8 @@ function footerHTML() {
   <footer class="border-t border-line bg-surface mt-20">
     <div class="max-w-7xl mx-auto px-4 py-14 grid grid-cols-2 md:grid-cols-4 gap-10">
       <div class="col-span-2 md:col-span-1">
-        <img src="/assets/img/logo.webp?v=8" alt="Cute Crew" class="h-16 w-auto"
-             onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='/assets/img/logo.png?v=8';}else{this.style.display='none';}">
+        <img src="/assets/img/logo.webp?v=9" alt="Cute Crew" class="h-16 w-auto"
+             onerror="var n=+(this.dataset.fb||0)+1;this.dataset.fb=n;if(n===1)this.src='/assets/img/logo.gif?v=9';else if(n===2)this.src='/assets/img/logo.png?v=9';else this.style.display='none';">
         <p class="text-soft text-sm mt-3 leading-relaxed">Premium fashion for little ones. Soft fabrics, luxury details, everyday play.</p>
         <div class="flex gap-3 mt-5 text-soft">
           <a href="#" aria-label="Instagram" class="hover:text-gold transition-colors"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>

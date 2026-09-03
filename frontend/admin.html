@@ -6,7 +6,7 @@
   <title>Admin — Cute Crew</title>
   <meta name="robots" content="noindex">
   <meta name="theme-color" content="#e8352b">
-  <link rel="icon" href="/assets/img/favicon.png?v=8" type="image/png">
+  <link rel="icon" href="/assets/img/favicon.png?v=9" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -19,8 +19,8 @@
   <!-- ============ LOGIN ============ -->
   <div id="admin-login" class="min-h-screen flex items-center justify-center p-4">
     <div class="glass w-full max-w-sm rounded-2xl p-8 shadow-lux">
-      <img src="/assets/img/logo.webp?v=8" alt="Cute Crew" class="h-24 w-auto mx-auto"
-           onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='/assets/img/logo.png?v=8';}else{this.style.display='none';}">
+      <img src="/assets/img/logo.webp?v=9" alt="Cute Crew" class="h-24 w-auto mx-auto"
+           onerror="var n=+(this.dataset.fb||0)+1;this.dataset.fb=n;if(n===1)this.src='/assets/img/logo.gif?v=9';else if(n===2)this.src='/assets/img/logo.png?v=9';else this.style.display='none';">
       <p class="text-soft text-sm text-center mt-3 mb-6">Admin Panel</p>
       <form id="admin-login-form" class="space-y-3">
         <input class="field" name="email" placeholder="Username" value="admin" required>
@@ -35,8 +35,8 @@
   <!-- ============ PANEL ============ -->
   <div id="admin-panel" class="hidden min-h-screen md:grid md:grid-cols-[230px_1fr]">
     <aside class="border-r border-line bg-surface p-5 flex md:flex-col gap-2 md:gap-1 overflow-x-auto md:sticky md:top-0 md:h-screen">
-      <img src="/assets/img/logo.webp?v=8" alt="Cute Crew" class="h-14 w-auto hidden md:block mb-6"
-           onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='/assets/img/logo.png?v=8';}else{this.style.display='none';}">
+      <img src="/assets/img/logo.webp?v=9" alt="Cute Crew" class="h-14 w-auto hidden md:block mb-6"
+           onerror="var n=+(this.dataset.fb||0)+1;this.dataset.fb=n;if(n===1)this.src='/assets/img/logo.gif?v=9';else if(n===2)this.src='/assets/img/logo.png?v=9';else this.style.display='none';">
       <button class="adm-tab chip !border-0 md:w-full md:text-left on" data-tab="dashboard">📊 Dashboard</button>
       <button class="adm-tab chip !border-0 md:w-full md:text-left" data-tab="hero">🎬 Hero 3D Images</button>
       <button class="adm-tab chip !border-0 md:w-full md:text-left" data-tab="products">👕 Products <span id="stock-alert-badge" class="hidden ml-1 items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-gold text-white text-[0.6rem] font-extrabold align-middle">0</span></button>
