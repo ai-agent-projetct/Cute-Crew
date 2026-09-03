@@ -1,6 +1,7 @@
 const express = require('express');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const productService = require('../services/productService');
+const mixmatchService = require('../services/mixmatchService');
 const heroService = require('../services/heroService');
 const orderService = require('../services/orderService');
 const authService = require('../services/authService');
@@ -16,15 +17,19 @@ router.get('/products', async (req, res, next) => {
 router.get('/products/:id', async (req, res, next) => {
   try {
     const p = await productService.byId(req.params.id);
-    if (!p) return res.status(404).json({ error: 'Product not found' });
-    res.json({ product: p, related: await productService.related(p.id) });
+    if (p) return res.json({ product: p, related: await productService.related(p.id) });
+    // Falls back to Mix & Match so a cart line's "view product" link still
+    // resolves for an outfit-builder item — those live in a separate table.
+    const m = await mixmatchService.byId(req.params.id);
+    if (!m) return res.status(404).json({ error: 'Product not found' });
+    res.json({ product: m, related: [] });
   } catch (e) { next(e); }
 });
 router.get('/categories', (req, res) => res.json({ categories: catalog.categories, ages: catalog.ages }));
 
 // ---------- mix & match ----------
 router.get('/mixmatch', async (req, res, next) => {
-  try { res.json(await productService.mixmatch(req.query.gender)); } catch (e) { next(e); }
+  try { res.json(await mixmatchService.list(req.query.gender)); } catch (e) { next(e); }
 });
 
 // ---------- hero (3D scrollable) ----------
@@ -158,6 +163,31 @@ router.delete('/admin/products/:id', requireAdmin, async (req, res, next) => {
   try {
     await productService.remove(req.params.id);
     res.json({ ok: true });
+  } catch (e) { next(e); }
+});
+
+// ---------- admin: mix & match ----------
+router.post('/admin/mixmatch', requireAdmin, async (req, res, next) => {
+  try { res.status(201).json(await mixmatchService.create(req.body)); } catch (e) { next(e); }
+});
+router.put('/admin/mixmatch/:id', requireAdmin, async (req, res, next) => {
+  try {
+    const p = await mixmatchService.update(req.params.id, req.body);
+    if (!p) return res.status(404).json({ error: 'Mix & Match item not found' });
+    res.json(p);
+  } catch (e) { next(e); }
+});
+router.delete('/admin/mixmatch/:id', requireAdmin, async (req, res, next) => {
+  try {
+    await mixmatchService.remove(req.params.id);
+    res.json({ ok: true });
+  } catch (e) { next(e); }
+});
+router.patch('/admin/mixmatch/:id/stock', requireAdmin, async (req, res, next) => {
+  try {
+    const p = await mixmatchService.setSizeStock(req.params.id, req.body.size, req.body.qty);
+    if (!p) return res.status(404).json({ error: 'Mix & Match item not found' });
+    res.json(p);
   } catch (e) { next(e); }
 });
 

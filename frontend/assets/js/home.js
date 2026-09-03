@@ -7,14 +7,16 @@
     const { slides } = await API.get('/hero');
     const uploaded = slides.filter((s) => s.uploaded);
     const banners = uploaded.length ? uploaded : slides.slice(0, 4);
-    // Every slide is one fixed 12:5 box so the carousel never changes height.
-    // Uploaded banners are padded to that ratio by tools/normalize-banners.py;
-    // `contain` means an un-normalised upload letterboxes instead of losing copy,
-    // since these are designed artwork with headline text baked in.
+    // One fixed box per breakpoint so the carousel never changes height —
+    // taller on mobile so the banner reads as a hero, not a thin strip; wider
+    // on larger screens where there's more horizontal room. Uploaded banners
+    // are padded to the desktop ratio by tools/normalize-banners.py; `contain`
+    // means an un-normalised upload letterboxes instead of losing copy, since
+    // these are designed artwork with headline text baked in.
     document.getElementById('banner-track').innerHTML = banners.map((s, i) => `
       <div class="swiper-slide">
         <img src="${s.src}" alt="${s.title || 'Cute Crew'}" loading="${i ? 'lazy' : 'eager'}"
-             class="w-full aspect-[12/5] object-contain block bg-white">
+             class="w-full aspect-[4/3] sm:aspect-[12/5] object-contain block bg-white">
       </div>`).join('');
     new Swiper('#banner-swiper', {
       loop: banners.length > 1,
@@ -31,7 +33,7 @@
       <div class="swiper-slide">
         <a href="/product.html?id=${p.id}" class="block relative group overflow-hidden">
           <img src="${p.image}" alt="${p.name}" loading="lazy"
-               class="w-full aspect-[4/5] object-cover transition-transform duration-500 group-hover:scale-[1.04]">
+               class="w-full aspect-[4/3] sm:aspect-[4/5] object-cover transition-transform duration-500 group-hover:scale-[1.04]">
           <div class="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/80 via-black/30 to-transparent">
             <p class="font-display font-extrabold text-lg leading-tight">${p.name}</p>
             <p class="text-sm mt-1"><span class="font-bold">${fmt(p.price)}</span>

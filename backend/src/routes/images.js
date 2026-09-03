@@ -2,6 +2,7 @@
 const express = require('express');
 const { renderGarment, renderPoster } = require('../utils/garments');
 const productService = require('../services/productService');
+const mixmatchService = require('../services/mixmatchService');
 const catalog = require('../data/catalog');
 
 const router = express.Router();
@@ -27,6 +28,15 @@ function sendSvg(res, svg) {
 router.get('/p/:id.svg', async (req, res, next) => {
   try {
     const p = await productService.byId(req.params.id);
+    if (!p) return res.status(404).send('Not found');
+    sendSvg(res, renderGarment({ type: p.type, hex: p.hex, accent: p.accent, motif: p.motif, bg: req.query.bg === 'none' ? 'none' : 'card' }));
+  } catch (e) { next(e); }
+});
+
+// Mix & Match item image: /img/mm/100012.svg  (?bg=none for transparent cutout)
+router.get('/mm/:id.svg', async (req, res, next) => {
+  try {
+    const p = await mixmatchService.byId(req.params.id);
     if (!p) return res.status(404).send('Not found');
     sendSvg(res, renderGarment({ type: p.type, hex: p.hex, accent: p.accent, motif: p.motif, bg: req.query.bg === 'none' ? 'none' : 'card' }));
   } catch (e) { next(e); }

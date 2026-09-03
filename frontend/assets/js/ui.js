@@ -39,7 +39,19 @@ const Cart = {
     Cart.write(items);
   },
   remove(id, size) { Cart.write(Cart.read().filter((i) => !(i.id === Number(id) && (i.size || '') === (size || '')))); },
-  clear() { Cart.write([]); }
+  clear() { Cart.write([]); },
+  // Drops any locally-stored line the server didn't price (product/mix & match
+  // item deleted, or an id from before a catalog change) — otherwise the bag
+  // badge (a raw local count) silently drifts from what actually renders and
+  // gets charged. Call with the `lines` from POST /cart/price. Returns how
+  // many lines were dropped, so callers can tell the customer why.
+  reconcile(pricedLines) {
+    const items = Cart.read();
+    const kept = items.filter((i) => pricedLines.some((l) => l.id === i.id && (l.size || '') === (i.size || '')));
+    const droppedCount = items.length - kept.length;
+    if (droppedCount > 0) Cart.write(kept);
+    return droppedCount;
+  }
 };
 window.Cart = Cart;
 

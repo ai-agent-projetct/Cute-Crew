@@ -17,6 +17,9 @@
 
     const s = await API.post('/cart/price', { items, coupon });
 
+    const dropped = Cart.reconcile(s.lines);
+    if (dropped > 0) toast(`${dropped} item${dropped > 1 ? 's' : ''} in your bag ${dropped > 1 ? 'are' : 'is'} no longer available and ${dropped > 1 ? 'were' : 'was'} removed`);
+
     lines.innerHTML = s.lines.map((l) => `
       <div class="p-card !rounded-xl p-4 flex gap-4">
         <a href="/product.html?id=${l.id}" class="w-24 shrink-0">

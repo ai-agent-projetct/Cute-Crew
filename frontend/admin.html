@@ -40,6 +40,7 @@
       <button class="adm-tab chip !border-0 md:w-full md:text-left on" data-tab="dashboard">📊 Dashboard</button>
       <button class="adm-tab chip !border-0 md:w-full md:text-left" data-tab="hero">🎬 Hero 3D Images</button>
       <button class="adm-tab chip !border-0 md:w-full md:text-left" data-tab="products">👕 Products <span id="stock-alert-badge" class="hidden ml-1 items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-gold text-white text-[0.6rem] font-extrabold align-middle">0</span></button>
+      <button class="adm-tab chip !border-0 md:w-full md:text-left" data-tab="mixmatch">🧩 Mix & Match</button>
       <button class="adm-tab chip !border-0 md:w-full md:text-left" data-tab="orders">📦 Orders</button>
       <button class="adm-tab chip !border-0 md:w-full md:text-left" data-tab="users">👥 Users</button>
       <div class="md:mt-auto flex md:flex-col gap-2">
@@ -108,7 +109,6 @@
               <option value="partywear">Party Wear</option><option value="winter">Winter</option><option value="nightwear">Night Wear</option>
               <option value="school">School</option><option value="newborn">Newborn</option>
             </select>
-            <select class="field" name="mix"><option value="">Not in Mix & Match</option><option value="top">Mix & Match — Top</option><option value="bottom">Mix & Match — Bottom</option></select>
             <input class="field" name="color" placeholder="Colour name (e.g. Baby Pink)">
             <label class="field flex items-center gap-3 cursor-pointer">Fabric <input type="color" name="hex" value="#f7a8c4" class="ml-auto h-7 w-14 bg-transparent cursor-pointer"></label>
             <label class="field flex items-center gap-3 cursor-pointer">Accent <input type="color" name="accent" value="#ffffff" class="ml-auto h-7 w-14 bg-transparent cursor-pointer"></label>
@@ -147,11 +147,83 @@
         <div id="product-list" class="mt-6 space-y-2"></div>
       </section>
 
+      <!-- MIX & MATCH -->
+      <section data-panel="mixmatch" class="hidden">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+          <h1 class="font-display font-extrabold text-2xl">Mix & Match</h1>
+          <button id="btn-new-mm" class="btn-gold px-5 py-2.5 text-sm">+ Add Item</button>
+        </div>
+        <p class="text-soft text-sm mt-1">Tops and bottoms for the outfit wheel — a separate catalog from Products, not sold in the regular shop.</p>
+
+        <form id="mm-form" class="p-card p-6 mt-6 hidden">
+          <p class="font-display font-bold mb-4" id="mm-form-title">New Mix & Match Item</p>
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <input class="field" name="name" placeholder="Item name *" required>
+            <select class="field" name="gender"><option value="girls">Girls</option><option value="boys">Boys</option><option value="unisex">Unisex</option></select>
+            <select class="field" name="ageGroup"><option value="kids">Kids (4–12Y)</option><option value="toddler">Toddler (1–3Y)</option><option value="newborn">Newborn (0–12M)</option></select>
+            <select class="field" name="type">
+              <option value="tshirt">T-Shirt</option><option value="hoodie">Hoodie</option><option value="dress">Dress</option>
+              <option value="pants">Pants</option><option value="shorts">Shorts</option><option value="skirt">Skirt</option>
+              <option value="romper">Romper</option><option value="jacket">Jacket</option>
+            </select>
+            <select class="field" name="mix" required><option value="top">Top</option><option value="bottom">Bottom</option></select>
+            <input class="field" name="color" placeholder="Colour name (e.g. Baby Pink)">
+            <label class="field flex items-center gap-3 cursor-pointer">Fabric <input type="color" name="hex" value="#f7a8c4" class="ml-auto h-7 w-14 bg-transparent cursor-pointer"></label>
+            <label class="field flex items-center gap-3 cursor-pointer">Accent <input type="color" name="accent" value="#ffffff" class="ml-auto h-7 w-14 bg-transparent cursor-pointer"></label>
+            <select class="field" name="motif">
+              <option value="star">★ Star</option><option value="heart">♥ Heart</option><option value="rainbow">🌈 Rainbow</option>
+              <option value="cloud">☁ Cloud</option><option value="crown">♛ Crown</option><option value="bear">🐻 Bear</option>
+              <option value="flower">✿ Flower</option><option value="bolt">⚡ Bolt</option>
+            </select>
+            <input class="field" name="price" type="number" min="99" placeholder="Price ₹ *" required>
+            <input class="field" name="mrp" type="number" min="99" placeholder="MRP ₹">
+            <input class="field" name="palette" placeholder="Palette (e.g. blue) — used for colour matching">
+          </div>
+
+          <div class="mt-5">
+            <p class="text-xs font-bold uppercase tracking-widest text-soft mb-1">Stock per size</p>
+            <p class="text-soft text-xs mb-3">Set units available for each size. A size at <b>0</b> shows as “out of stock” and can't be ordered.</p>
+            <div id="mm-stock-inputs" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2"></div>
+          </div>
+          <input type="hidden" name="photo">
+          <div class="flex flex-wrap items-center gap-4 mt-4">
+            <img id="mm-preview" src="/img/g/tshirt.svg?hex=%23f7a8c4&accent=%23ffffff&motif=star" alt="Preview" class="w-24 rounded-xl border border-line aspect-[4/5] object-cover">
+            <div class="min-w-0">
+              <label class="btn-ghost px-4 py-2 text-xs cursor-pointer inline-block">
+                📷 Upload photo
+                <input id="mm-photo-file" type="file" accept="image/*" class="hidden">
+              </label>
+              <button type="button" id="mm-photo-remove" class="text-red-400 text-xs hover:underline ml-3 hidden">Remove photo</button>
+              <p class="text-soft text-xs mt-1.5" id="mm-photo-hint">No photo uploaded — the illustrated art (type + colours) is used.</p>
+            </div>
+            <div class="ml-auto flex gap-2">
+              <button type="button" id="mm-cancel" class="btn-ghost px-5 py-2.5 text-sm">Cancel</button>
+              <button class="btn-gold px-6 py-2.5 text-sm">Save Item</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="flex gap-2 mt-6">
+          <button class="chip on" data-mm-gender="girls">Girls</button>
+          <button class="chip" data-mm-gender="boys">Boys</button>
+        </div>
+        <div id="mm-list" class="mt-4 space-y-2"></div>
+      </section>
+
       <!-- ORDERS -->
       <section data-panel="orders" class="hidden">
         <h1 class="font-display font-extrabold text-2xl mb-6">Orders</h1>
         <div id="order-list" class="space-y-3"></div>
       </section>
+
+      <!-- ORDER DETAIL MODAL -->
+      <div id="order-modal" class="fixed inset-0 z-[80] hidden items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-close-order></div>
+        <div class="glass relative w-full max-w-lg rounded-2xl p-7 shadow-lux max-h-[85vh] overflow-y-auto">
+          <button class="absolute top-4 right-4 text-soft hover:text-gold" data-close-order aria-label="Close">✕</button>
+          <div id="order-modal-body"></div>
+        </div>
+      </div>
 
       <!-- USERS -->
       <section data-panel="users" class="hidden">

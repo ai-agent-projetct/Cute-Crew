@@ -35,6 +35,7 @@
     if (t.dataset.tab === 'dashboard') loadStats();
     if (t.dataset.tab === 'hero') loadHero();
     if (t.dataset.tab === 'products') loadProducts();
+    if (t.dataset.tab === 'mixmatch') loadMixMatch();
     if (t.dataset.tab === 'orders') loadOrders();
     if (t.dataset.tab === 'users') loadUsers();
   }));
@@ -218,7 +219,6 @@
     e.preventDefault();
     const fd = new FormData(pForm);
     const body = Object.fromEntries(fd.entries());
-    body.mix = body.mix || null;
     body.photo = body.photo || null;
     body.stockBySize = readStockInputs();
     delete body.stock;
@@ -262,7 +262,7 @@
         <img src="${p.image}" alt="" class="w-12 rounded-lg aspect-[4/5] object-cover">
         <div class="min-w-0 flex-1">
           <p class="font-bold truncate">${p.name}${tag}</p>
-          <p class="text-xs text-soft">#${p.id} · ${p.gender} · ${p.category}${p.mix ? ` · <span class="text-gold">M&M ${p.mix}</span>` : ''}</p>
+          <p class="text-xs text-soft">#${p.id} · ${p.gender} · ${p.category}</p>
           <p class="text-[0.68rem] mt-0.5">Stock &nbsp;${sizeChips} &nbsp;·&nbsp; <b class="${out ? 'text-red-400' : ''}">${p.stock} total</b></p>
         </div>
         <span class="font-bold shrink-0">${fmt(p.price)}</span>
@@ -289,12 +289,156 @@
     }
   });
 
+  // ---------- mix & match ----------
+  const mmForm = document.getElementById('mm-form');
+  let editingMmId = null;
+  let mmGender = 'girls';
+
+  function renderMmStockInputs(ageGroup, current) {
+    const sizes = SIZE_SETS[ageGroup] || SIZE_SETS.kids;
+    document.getElementById('mm-stock-inputs').innerHTML = sizes.map((s) => `
+      <label class="flex flex-col gap-1">
+        <span class="text-[0.62rem] font-bold text-soft text-center">${s}</span>
+        <input type="number" min="0" class="field !py-1.5 !px-1 text-center text-sm" data-mm-stock-size="${s}" value="${current && current[s] != null ? current[s] : 12}">
+      </label>`).join('');
+  }
+  function readMmStockInputs() {
+    const out = {};
+    document.querySelectorAll('#mm-stock-inputs [data-mm-stock-size]').forEach((inp) => {
+      out[inp.dataset.mmStockSize] = Math.max(0, parseInt(inp.value, 10) || 0);
+    });
+    return out;
+  }
+  mmForm.elements.ageGroup.addEventListener('change', () => renderMmStockInputs(mmForm.elements.ageGroup.value, readMmStockInputs()));
+
+  document.getElementById('btn-new-mm').addEventListener('click', () => {
+    editingMmId = null;
+    mmForm.reset();
+    mmForm.elements.photo.value = '';
+    document.getElementById('mm-form-title').textContent = 'New Mix & Match Item';
+    renderMmStockInputs(mmForm.elements.ageGroup.value, null);
+    mmForm.classList.remove('hidden');
+    updateMmPreview();
+  });
+  document.getElementById('mm-cancel').addEventListener('click', () => mmForm.classList.add('hidden'));
+
+  function updateMmPreview() {
+    const fd = new FormData(mmForm);
+    const photo = mmForm.elements.photo.value;
+    document.getElementById('mm-photo-remove').classList.toggle('hidden', !photo);
+    document.getElementById('mm-photo-hint').textContent = photo
+      ? 'Photo uploaded ✓'
+      : 'No photo uploaded — the illustrated art (type + colours) is used.';
+    document.getElementById('mm-preview').src = photo ||
+      `/img/g/${fd.get('type')}.svg?hex=${encodeURIComponent(fd.get('hex'))}&accent=${encodeURIComponent(fd.get('accent'))}&motif=${fd.get('motif')}`;
+  }
+  mmForm.addEventListener('input', updateMmPreview);
+
+  document.getElementById('mm-photo-file').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const hint = document.getElementById('mm-photo-hint');
+    hint.textContent = 'Uploading photo…';
+    try {
+      const fd = new FormData();
+      fd.append('image', file);
+      const { url } = await API.post('/admin/upload', fd);
+      mmForm.elements.photo.value = url;
+      updateMmPreview();
+      toast('Photo uploaded ✓');
+    } catch (ex) {
+      hint.textContent = ex.message;
+    }
+    e.target.value = '';
+  });
+  document.getElementById('mm-photo-remove').addEventListener('click', () => {
+    mmForm.elements.photo.value = '';
+    updateMmPreview();
+  });
+
+  mmForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(mmForm);
+    const body = Object.fromEntries(fd.entries());
+    body.photo = body.photo || null;
+    body.stockBySize = readMmStockInputs();
+    try {
+      if (editingMmId) await API.put(`/admin/mixmatch/${editingMmId}`, body);
+      else await API.post('/admin/mixmatch', body);
+      toast(editingMmId ? 'Item updated ✓' : 'Item added ✓');
+      mmForm.classList.add('hidden');
+      loadMixMatch();
+    } catch (ex) { toast(ex.message); }
+  });
+
+  async function openEditMm(id) {
+    const { product } = await API.get(`/products/${id}`);
+    editingMmId = product.id;
+    mmForm.reset();
+    document.getElementById('mm-form-title').textContent = `Edit #${product.id} — ${product.name}`;
+    mmForm.classList.remove('hidden');
+    for (const [k, v] of Object.entries(product)) {
+      const input = mmForm.elements[k];
+      if (input && v !== null && typeof v !== 'object') input.value = v;
+    }
+    mmForm.elements.photo.value = product.photo || '';
+    renderMmStockInputs(product.ageGroup, product.stockBySize);
+    updateMmPreview();
+    mmForm.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  async function loadMixMatch() {
+    const { tops, bottoms } = await API.get(`/mixmatch?gender=${mmGender}`);
+    const items = tops.concat(bottoms);
+    document.getElementById('mm-list').innerHTML = items.length ? items.map((p) => {
+      const out = p.stock === 0;
+      const low = p.stock > 0 && p.stock <= 5;
+      const tag = out ? '<span class="text-red-400 text-[0.6rem] font-extrabold ml-1">OUT OF STOCK</span>'
+        : low ? '<span class="text-peach text-[0.6rem] font-extrabold ml-1">LOW STOCK</span>' : '';
+      const sizeChips = Object.entries(p.stockBySize || {}).map(([s, n]) =>
+        `<span class="${n === 0 ? 'text-red-400' : n <= 2 ? 'text-peach' : 'text-soft'}">${s}:${n}</span>`).join('  ');
+      return `
+      <div class="p-card !rounded-xl p-3 flex items-center gap-3 flex-wrap">
+        <img src="${p.image}" alt="" class="w-12 rounded-lg aspect-[4/5] object-cover">
+        <div class="min-w-0 flex-1">
+          <p class="font-bold truncate">${p.name}${tag}</p>
+          <p class="text-xs text-soft">#${p.id} · ${p.gender} · <span class="text-gold">${p.mix}</span></p>
+          <p class="text-[0.68rem] mt-0.5">Stock &nbsp;${sizeChips} &nbsp;·&nbsp; <b class="${out ? 'text-red-400' : ''}">${p.stock} total</b></p>
+        </div>
+        <span class="font-bold shrink-0">${fmt(p.price)}</span>
+        <button class="btn-ghost px-4 py-1.5 text-xs shrink-0" data-edit-mm="${p.id}">Edit</button>
+        <button class="text-red-400 text-xs hover:underline shrink-0" data-del-mm="${p.id}">Delete</button>
+      </div>`;
+    }).join('') : '<p class="text-soft text-sm">No Mix & Match items for this gender yet.</p>';
+  }
+
+  document.querySelectorAll('[data-mm-gender]').forEach((btn) => btn.addEventListener('click', () => {
+    mmGender = btn.dataset.mmGender;
+    document.querySelectorAll('[data-mm-gender]').forEach((b) => b.classList.toggle('on', b === btn));
+    loadMixMatch();
+  }));
+
+  document.addEventListener('click', async (e) => {
+    const del = e.target.closest('[data-del-mm]');
+    if (del && confirm('Delete this Mix & Match item?')) {
+      await API.del(`/admin/mixmatch/${del.dataset.delMm}`);
+      toast('Item deleted');
+      loadMixMatch();
+      return;
+    }
+    const edit = e.target.closest('[data-edit-mm]');
+    if (edit) openEditMm(edit.dataset.editMm);
+  });
+
   // ---------- orders ----------
   const STATUSES = ['placed', 'packed', 'shipped', 'delivered', 'cancelled'];
+  let ordersCache = [];
+
   async function loadOrders() {
     const { orders } = await API.get('/admin/orders');
+    ordersCache = orders;
     document.getElementById('order-list').innerHTML = orders.length ? orders.map((o) => `
-      <div class="p-card p-4">
+      <div class="p-card p-4 cursor-pointer hover:border-gold transition-colors" data-view-order="${o.id}">
         <div class="flex items-center justify-between flex-wrap gap-2">
           <div>
             <p class="font-bold"><span class="text-gold">${o.id}</span> · ${o.customer.name} · ${o.customer.phone}</p>
@@ -311,11 +455,64 @@
         <p class="text-xs text-soft mt-2">${o.summary.lines.map((l) => `${l.name} (${l.size}×${l.qty})`).join(' · ')} · ${o.payment.toUpperCase()}</p>
       </div>`).join('') : '<p class="text-soft">No orders yet.</p>';
   }
+
+  const orderModal = document.getElementById('order-modal');
+  function openOrderModal(id) {
+    const o = ordersCache.find((x) => x.id === id);
+    if (!o) return;
+    const s = o.summary;
+    document.getElementById('order-modal-body').innerHTML = `
+      <p class="font-display font-extrabold text-xl">${o.id}</p>
+      <p class="text-soft text-sm mt-1">${new Date(o.at).toLocaleString()} · <span class="uppercase">${o.status}</span> · ${o.payment.toUpperCase()}</p>
+
+      <p class="text-xs font-bold uppercase tracking-widest text-soft mt-5 mb-1.5">Customer</p>
+      <p class="text-sm font-bold">${o.customer.name}</p>
+      <p class="text-sm text-soft">${o.customer.phone}${o.customer.email ? ` · ${o.customer.email}` : ''}</p>
+      <p class="text-sm text-soft">${o.customer.address}</p>
+      <p class="text-xs mt-1.5">${o.user ? `<span class="text-pastelblue">Account: ${o.user.name} (${o.user.email})</span>` : '<span class="text-soft">Guest (legacy order)</span>'}</p>
+
+      <p class="text-xs font-bold uppercase tracking-widest text-soft mt-5 mb-2">Items</p>
+      <div class="space-y-2.5">
+        ${s.lines.map((l) => `
+          <div class="flex gap-3 items-center">
+            <img src="${l.image}" alt="" class="w-12 rounded-lg aspect-[4/5] object-cover shrink-0">
+            <div class="min-w-0 flex-1">
+              <p class="font-semibold truncate">${l.name}</p>
+              <p class="text-xs text-soft">#${l.id} · ${l.color || ''} · Size ${l.size || '—'} × ${l.qty}</p>
+            </div>
+            <span class="font-bold shrink-0">${fmt(l.price * l.qty)}</span>
+          </div>`).join('')}
+      </div>
+
+      <div class="text-sm mt-5 pt-4 border-t border-line space-y-1.5">
+        <div class="flex justify-between"><span class="text-soft">Bag total (MRP)</span><span>${fmt(s.mrpTotal)}</span></div>
+        <div class="flex justify-between"><span class="text-soft">Bag discount</span><span class="text-mint">− ${fmt(s.bagDiscount)}</span></div>
+        ${s.coupon ? `<div class="flex justify-between"><span class="text-soft">Coupon ${s.coupon}</span><span class="text-mint">− ${fmt(s.couponOff)}</span></div>` : ''}
+        <div class="flex justify-between"><span class="text-soft">Delivery</span><span>${s.shipping === 0 ? '<span class="text-mint">FREE</span>' : fmt(s.shipping)}</span></div>
+        <div class="flex justify-between font-extrabold text-base pt-1"><span>Total</span><span>${fmt(s.total)}</span></div>
+        <p class="text-xs text-soft">Reward points earned: ${s.rewardPoints}</p>
+      </div>`;
+    orderModal.classList.remove('hidden');
+    orderModal.classList.add('flex');
+  }
+  function closeOrderModal() {
+    orderModal.classList.add('hidden');
+    orderModal.classList.remove('flex');
+  }
+  orderModal.querySelectorAll('[data-close-order]').forEach((el) => el.addEventListener('click', closeOrderModal));
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('select')) return; // don't open the modal from the status dropdown
+    const card = e.target.closest('[data-view-order]');
+    if (card) openOrderModal(card.dataset.viewOrder);
+  });
+
   document.addEventListener('change', async (e) => {
     const sel = e.target.closest('[data-status]');
     if (sel) {
       await API.patch(`/admin/orders/${sel.dataset.status}`, { status: sel.value });
       toast('Status updated ✓');
+      loadOrders();
     }
   });
 

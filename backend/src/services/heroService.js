@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const store = require('../utils/store');
+const db = require('../utils/mysql-db');
 const config = require('../config');
 
 // Default hero slides — real editorial photography generated for the brand.
@@ -17,31 +17,29 @@ const DEFAULT_SLIDES = [
   { src: '/assets/img/real/school-walk.png', title: 'School' }
 ];
 
-function uploaded() {
-  return store.read('hero', []);
+async function uploaded() {
+  const rows = await db.query('SELECT * FROM hero_slides ORDER BY id DESC');
+  return rows.map((r) => ({ file: r.file, title: r.title, at: r.createdAt }));
 }
 
-// `file` is a bare filename from the older uploader but an already-rooted
-// `/uploads/xxx` URL from the current one — normalise both to a single src so
-// neither shape double-prefixes into `/uploads//uploads/xxx`.
-const srcOf = (file) => (file.startsWith('/') ? file : `/uploads/${file}`);
+// `file` is a bare filename from the older uploader, an already-rooted
+// `/uploads/xxx` URL from the disk uploader, or a full `https://...` Blob URL
+// on Vercel — normalise all three to a single src without double-prefixing.
+const srcOf = (file) => (/^(\/|https?:\/\/)/i.test(file) ? file : `/uploads/${file}`);
 
 // Uploaded images come first (admin content leads the 3D hero), defaults fill the rest.
-function slides() {
-  const ups = uploaded().map((u) => ({ src: srcOf(u.file), title: u.title || 'Cute Crew', uploaded: true, file: u.file }));
+async function slides() {
+  const ups = (await uploaded()).map((u) => ({ src: srcOf(u.file), title: u.title || 'Cute Crew', uploaded: true, file: u.file }));
   return ups.concat(DEFAULT_SLIDES).slice(0, 12);
 }
 
-function add(file, title) {
-  const list = uploaded().slice();
-  list.unshift({ file, title: title || '', at: new Date().toISOString() });
-  store.write('hero', list);
+async function add(file, title) {
+  await db.query('INSERT INTO hero_slides (file, title) VALUES (?, ?)', [file, title || '']);
   return slides();
 }
 
-function remove(file) {
-  const list = uploaded().filter((u) => u.file !== file);
-  store.write('hero', list);
+async function remove(file) {
+  await db.query('DELETE FROM hero_slides WHERE file = ?', [file]);
   const abs = path.join(config.uploadsDir, path.basename(file));
   if (fs.existsSync(abs) && path.dirname(abs) === config.uploadsDir) fs.unlinkSync(abs);
   return slides();

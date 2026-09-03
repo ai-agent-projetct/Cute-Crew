@@ -1,6 +1,6 @@
 /* Checkout: summary + order placement (COD demo). Ordering requires a customer profile. */
 (async function () {
-  const items = Cart.read();
+  let items = Cart.read();
   const coupon = sessionStorage.getItem('ll_coupon') || '';
 
   if (!items.length) {
@@ -33,6 +33,13 @@
   }, 0);
 
   const s = await API.post('/cart/price', { items, coupon });
+
+  const dropped = Cart.reconcile(s.lines);
+  if (dropped > 0) {
+    items = Cart.read();
+    toast(`${dropped} item${dropped > 1 ? 's' : ''} in your bag ${dropped > 1 ? 'are' : 'is'} no longer available and ${dropped > 1 ? 'were' : 'was'} removed`);
+  }
+
   document.getElementById('sum-lines').innerHTML = s.lines.map((l) => `
     <div class="flex gap-3 items-center">
       <img src="${l.image}" alt="" class="w-11 rounded-md aspect-[4/5] object-cover">

@@ -41,7 +41,11 @@ function P(p) {
   );
 }
 
-const products = [
+// One flat, id-ordered list (ids come from P()'s shared counter, in call order
+// below) — split afterward into `products` (regular shop catalog) and
+// `mixmatch` (outfit-builder tops/bottoms) so every item keeps the same id it
+// always had, regardless of which table it ends up seeding.
+const seedAll = [
   // ---------------- GIRLS — MIX & MATCH TOPS (real photos) ----------------
   P({ name: 'Star Glow Tee', gender: 'girls', category: 'tops', type: 'tshirt', color: 'Baby Pink', hex: '#f7a8c4', motif: 'star', price: 699, rating: 4.7, badge: 'Bestseller', mix: 'top', palette: 'pink', matches: ['pink', 'cream', 'denim', 'sun'], photo: `${REAL}/gt-pink-tee.png`, photoCut: `${REAL}/gt-pink-tee-cut.png` }),
   P({ name: 'Lavender Ruffle Top', gender: 'girls', category: 'tops', type: 'tshirt', color: 'Lavender', hex: '#c9b8f0', motif: 'flower', price: 799, rating: 4.6, mix: 'top', palette: 'lav', matches: ['cream', 'pink', 'denim'], photo: `${REAL}/gt-lavender-ruffle.png`, photoCut: `${REAL}/gt-lavender-ruffle-cut.png` }),
@@ -189,6 +193,11 @@ const products = [
   P({ name: 'Aqua Blue Orange and White', gender: 'unisex', ageGroup: 'newborn', category: 'newborn', type: 'pants', color: 'White', hex: '#f2f0ea', motif: 'star', price: 399, photo: `${REAL}/mk-119.png` })
 ];
 
+// Mix & Match tops/bottoms live in their own table (mixmatchService), not the
+// regular shop catalog — split them out here, ids unaffected either way.
+const products = seedAll.filter((p) => !p.mix);
+const mixmatch = seedAll.filter((p) => p.mix);
+
 const categories = [
   { key: 'boys', label: 'Boys', query: 'gender=boys', type: 'tshirt', hex: '#9cc6ff', accent: '#eaf3ff', motif: 'bolt', photo: `${REAL}/boy-walk.png` },
   { key: 'girls', label: 'Girls', query: 'gender=girls', type: 'dress', hex: '#f7a8c4', accent: '#e6c586', motif: 'flower', photo: `${REAL}/girl-frock.png` },
@@ -206,4 +215,4 @@ const ages = [
   { key: 'kids', label: 'Kids', sub: '4–12 Years', chips: ['4Y', '5Y', '6Y', '7Y', '8Y', '10Y', '12Y'] }
 ];
 
-module.exports = { products, categories, ages };
+module.exports = { products, mixmatch, categories, ages };

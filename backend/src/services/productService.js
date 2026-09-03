@@ -1,5 +1,4 @@
-const store = require('../utils/store');
-const catalog = require('../data/catalog');
+const db = require('../utils/mysql-db');
 
 // Size sets per age group (mirrors catalog.js)
 const SIZE_SETS = {
@@ -9,10 +8,28 @@ const SIZE_SETS = {
 };
 const LOW_STOCK = 5;          // at/below this (and > 0) counts as "low stock"
 
+// mysql2 auto-parses JSON columns into objects/arrays already; only parse if
+// we got a raw string back (e.g. from a driver that doesn't auto-parse).
+function asJson(v, fallback) {
+  if (v == null) return fallback;
+  if (typeof v === 'string') {
+    try { return JSON.parse(v); } catch { return fallback; }
+  }
+  return v;
+}
+
+function fromRow(row) {
+  return Object.assign({}, row, {
+    matches: asJson(row.matches, []),
+    sizes: asJson(row.sizes, []),
+    stockBySize: asJson(row.stockBySize, {}),
+    spotlight: !!row.spotlight
+  });
+}
+
 // ---- per-size stock helpers ----
 function buildStockBySize(p) {
   const sizes = (p.sizes && p.sizes.length) ? p.sizes : (SIZE_SETS[p.ageGroup] || SIZE_SETS.kids);
-  // seed data only had a single `stock` total — start every size at a healthy default
   const per = 12;
   const out = {};
   sizes.forEach((s) => { out[s] = per; });
@@ -21,34 +38,12 @@ function buildStockBySize(p) {
 
 function totalStock(p) {
   if (p.stockBySize) return Object.values(p.stockBySize).reduce((s, n) => s + (Number(n) || 0), 0);
-  return Number(p.stock) || 0;
+  return 0;
 }
 
-function all() {
-  const list = store.read('products', () => catalog.products);
-  let changed = false;
-
-  // The store is written once and read forever after, so products added to the
-  // seed catalog later would never surface. Merge them in by id — existing rows
-  // are left alone, so admin edits and stock counts always win.
-  const known = new Set(list.map((p) => p.id));
-  for (const seed of catalog.products) {
-    if (!known.has(seed.id)) { list.push(Object.assign({}, seed)); changed = true; }
-  }
-
-  // one-time migration: give every product per-size stock
-  for (const p of list) {
-    if (!p.stockBySize || typeof p.stockBySize !== 'object') {
-      p.stockBySize = buildStockBySize(p);
-      changed = true;
-    }
-  }
-  if (changed) store.write('products', list);
-  return list;
-}
-
-function save(list) {
-  return store.write('products', list);
+async function all() {
+  const rows = await db.query('SELECT * FROM products ORDER BY id');
+  return rows.map(fromRow);
 }
 
 function withImage(p) {
@@ -64,8 +59,8 @@ function withImage(p) {
   });
 }
 
-function query(q = {}) {
-  let list = all().slice();
+async function query(q = {}) {
+  let list = await all();
 
   if (q.gender) {
     const g = String(q.gender).toLowerCase();
@@ -77,7 +72,6 @@ function query(q = {}) {
     list = list.filter((p) => cats.includes(p.category));
   }
   if (q.type) list = list.filter((p) => p.type === q.type);
-  if (q.mix) list = list.filter((p) => p.mix === q.mix);
   if (q.spotlight) list = list.filter((p) => p.spotlight);
   if (q.color) {
     const colors = String(q.color).toLowerCase().split(',');
@@ -111,26 +105,20 @@ function query(q = {}) {
   return { total, items: list.slice(offset, offset + limit).map(withImage) };
 }
 
-function byId(id) {
-  const p = all().find((x) => x.id === Number(id));
-  return p ? withImage(p) : null;
+async function byId(id) {
+  const row = await db.queryOne('SELECT * FROM products WHERE id = ?', [Number(id)]);
+  return row ? withImage(fromRow(row)) : null;
 }
 
-function related(id, count = 4) {
-  const p = all().find((x) => x.id === Number(id));
+async function related(id, count = 4) {
+  const list = await all();
+  const p = list.find((x) => x.id === Number(id));
   if (!p) return [];
-  return all()
+  return list
     .filter((x) => x.id !== p.id && (x.category === p.category || x.gender === p.gender))
     .sort((a, b) => b.rating - a.rating)
     .slice(0, count)
     .map(withImage);
-}
-
-function mixmatch(gender) {
-  const g = gender === 'boys' ? 'boys' : 'girls';
-  const tops = all().filter((p) => p.mix === 'top' && (p.gender === g || p.gender === 'unisex')).map(withImage);
-  const bottoms = all().filter((p) => p.mix === 'bottom' && (p.gender === g || p.gender === 'unisex')).map(withImage);
-  return { gender: g, tops, bottoms };
 }
 
 function isMatch(top, bottom) {
@@ -147,19 +135,16 @@ function cleanStock(obj) {
   return out;
 }
 
-function create(data) {
-  const list = all().slice();
-  const id = list.reduce((m, p) => Math.max(m, p.id), 0) + 1;
+async function create(data) {
   const p = Object.assign(
     {
-      id, gender: 'unisex', ageGroup: 'kids', category: 'tops', type: 'tshirt',
+      gender: 'unisex', ageGroup: 'kids', category: 'tops', type: 'tshirt',
       color: 'Pastel Blue', hex: '#9cc6ff', accent: '#ffffff', motif: 'star',
-      price: 599, mrp: 899, rating: 4.2, ratings: 12, badge: 'New', mix: null,
+      price: 599, mrp: 899, rating: 4.2, ratings: 12, badge: 'New',
       palette: 'blue', matches: [], spotlight: false, material: '100% Organic Cotton',
       sizes: SIZE_SETS.kids.slice(), description: 'Ultra-soft premium fabric, tailored for all-day comfort and play.'
     },
-    data,
-    { id }
+    data
   );
   p.price = Number(p.price) || 599;
   p.mrp = Number(p.mrp) || Math.round(p.price * 1.5);
@@ -169,77 +154,100 @@ function create(data) {
   } else {
     p.stockBySize = buildStockBySize(p);
   }
-  delete p.stock;
-  list.push(p);
-  save(list);
-  return withImage(p);
+
+  const result = await db.query(
+    `INSERT INTO products (name, gender, ageGroup, category, type, color, hex, accent, motif,
+     price, mrp, rating, ratings, badge, palette, matches, material, description, photo, photoCut,
+     spotlight, sizes, stockBySize)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      p.name, p.gender, p.ageGroup, p.category, p.type, p.color, p.hex, p.accent, p.motif,
+      p.price, p.mrp, p.rating, p.ratings, p.badge, p.palette, JSON.stringify(p.matches),
+      p.material, p.description, p.photo || null, p.photoCut || null,
+      !!p.spotlight, JSON.stringify(p.sizes), JSON.stringify(p.stockBySize)
+    ]
+  );
+  return byId(result.insertId);
 }
 
-function update(id, data) {
-  const list = all().slice();
-  const i = list.findIndex((p) => p.id === Number(id));
-  if (i === -1) return null;
+async function update(id, data) {
+  const existing = await db.queryOne('SELECT * FROM products WHERE id = ?', [Number(id)]);
+  if (!existing) return null;
+  const current = fromRow(existing);
   delete data.id;
-  const merged = Object.assign({}, list[i], data);
+  const merged = Object.assign({}, current, data);
   if (data.price) merged.price = Number(data.price);
   if (data.mrp) merged.mrp = Number(data.mrp);
   if (data.stockBySize && typeof data.stockBySize === 'object') {
     merged.stockBySize = cleanStock(data.stockBySize);
     merged.sizes = Object.keys(merged.stockBySize);
   }
-  delete merged.stock;
-  list[i] = merged;
-  save(list);
-  return withImage(list[i]);
+
+  await db.query(
+    `UPDATE products SET name=?, gender=?, ageGroup=?, category=?, type=?, color=?, hex=?, accent=?,
+     motif=?, price=?, mrp=?, rating=?, ratings=?, badge=?, palette=?, matches=?, material=?,
+     description=?, photo=?, photoCut=?, spotlight=?, sizes=?, stockBySize=? WHERE id=?`,
+    [
+      merged.name, merged.gender, merged.ageGroup, merged.category, merged.type, merged.color,
+      merged.hex, merged.accent, merged.motif, merged.price, merged.mrp, merged.rating,
+      merged.ratings, merged.badge, merged.palette, JSON.stringify(merged.matches || []),
+      merged.material, merged.description, merged.photo || null, merged.photoCut || null,
+      !!merged.spotlight, JSON.stringify(merged.sizes || []), JSON.stringify(merged.stockBySize || {}),
+      Number(id)
+    ]
+  );
+  return byId(id);
 }
 
-function remove(id) {
-  const list = all().filter((p) => p.id !== Number(id));
-  save(list);
+async function remove(id) {
+  await db.query('DELETE FROM products WHERE id = ?', [Number(id)]);
   return true;
 }
 
 // Reserve stock for an order. Validates every line, then decrements atomically.
 // lines: [{ id, size, qty }]
-function checkAndDecrement(lines) {
-  const list = all().slice();
-  const find = (id) => list.find((x) => x.id === Number(id));
+async function checkAndDecrement(lines) {
+  const rows = await Promise.all(lines.map((l) => db.queryOne('SELECT * FROM products WHERE id = ?', [Number(l.id)])));
 
   // 1) validate all lines first
-  for (const l of lines) {
-    const p = find(l.id);
-    if (!p) throw Object.assign(new Error('A product in your bag is no longer available'), { status: 409 });
-    const avail = (p.stockBySize && p.stockBySize[l.size] != null) ? p.stockBySize[l.size] : 0;
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i];
+    const row = rows[i];
+    if (!row) throw Object.assign(new Error('A product in your bag is no longer available'), { status: 409 });
+    const stockBySize = asJson(row.stockBySize, {});
+    const avail = stockBySize[l.size] != null ? stockBySize[l.size] : 0;
     if (avail < l.qty) {
       throw Object.assign(
-        new Error(`Sorry, "${p.name}" in size ${l.size || '—'} is out of stock (only ${avail} left)`),
+        new Error(`Sorry, "${row.name}" in size ${l.size || '—'} is out of stock (only ${avail} left)`),
         { status: 409 }
       );
     }
   }
   // 2) decrement
-  for (const l of lines) {
-    const p = find(l.id);
-    p.stockBySize[l.size] = Math.max(0, (p.stockBySize[l.size] || 0) - l.qty);
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i];
+    const stockBySize = asJson(rows[i].stockBySize, {});
+    stockBySize[l.size] = Math.max(0, (stockBySize[l.size] || 0) - l.qty);
+    await db.query('UPDATE products SET stockBySize = ? WHERE id = ?', [JSON.stringify(stockBySize), Number(l.id)]);
   }
-  save(list);
 }
 
 // Add/set stock for one size (admin quick actions)
-function setSizeStock(id, size, qty) {
-  const list = all().slice();
-  const p = list.find((x) => x.id === Number(id));
-  if (!p) return null;
-  if (!p.stockBySize) p.stockBySize = {};
-  p.stockBySize[size] = Math.max(0, Math.floor(Number(qty) || 0));
-  if (!p.sizes.includes(size)) p.sizes.push(size);
-  save(list);
-  return withImage(p);
+async function setSizeStock(id, size, qty) {
+  const row = await db.queryOne('SELECT * FROM products WHERE id = ?', [Number(id)]);
+  if (!row) return null;
+  const stockBySize = asJson(row.stockBySize, {});
+  const sizes = asJson(row.sizes, []);
+  stockBySize[size] = Math.max(0, Math.floor(Number(qty) || 0));
+  if (!sizes.includes(size)) sizes.push(size);
+  await db.query('UPDATE products SET stockBySize = ?, sizes = ? WHERE id = ?',
+    [JSON.stringify(stockBySize), JSON.stringify(sizes), Number(id)]);
+  return byId(id);
 }
 
 // Out-of-stock + low-stock lists for the admin dashboard notification
-function stockAlerts() {
-  const items = all().map(withImage);
+async function stockAlerts() {
+  const items = (await all()).map(withImage);
   const out = items.filter((p) => p.stock === 0)
     .map((p) => ({ id: p.id, name: p.name, image: p.image, sizes: p.sizes }));
   const low = items.filter((p) => p.stock > 0 && p.stock <= LOW_STOCK)
@@ -249,6 +257,6 @@ function stockAlerts() {
 }
 
 module.exports = {
-  all, query, byId, related, mixmatch, isMatch, create, update, remove, withImage,
+  all, query, byId, related, isMatch, create, update, remove, withImage,
   checkAndDecrement, setSizeStock, stockAlerts, SIZE_SETS, LOW_STOCK
 };
